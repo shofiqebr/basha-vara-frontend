@@ -1,11 +1,12 @@
 "use client";
 
 import Footer from "@/components/Footer";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface LoginInputs {
-  identifier: string;
+  email: string;
   password: string;
 }
 
@@ -21,6 +22,8 @@ const AuthForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const router = useRouter();
+
   const {
     register: loginRegister,
     handleSubmit: handleLoginSubmit,
@@ -34,6 +37,7 @@ const AuthForm = () => {
   } = useForm<RegisterInputs>();
 
   const onLoginSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    // console.log(data)
     setLoading(true);
     setError("");
     try {
@@ -43,9 +47,11 @@ const AuthForm = () => {
         body: JSON.stringify(data),
       });
       const result = await res.json();
+      // console.log(result)
       if (!res.ok) throw new Error(result.message || "Login failed");
-      localStorage.setItem("token", result.token);
+      localStorage.setItem("loginData", JSON.stringify(result?.data));
       alert("Login successful!");
+      router.push('/')
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -86,11 +92,11 @@ const AuthForm = () => {
           {isLogin ? (
             <form onSubmit={handleLoginSubmit(onLoginSubmit)} className="space-y-4">
               <input
-                {...loginRegister("identifier", { required: "Username or Email is required" })}
+                {...loginRegister("email", { required: "Email is required" })}
                 className="w-full p-2 rounded bg-gray-800 text-white"
-                placeholder="Username or Email"
+                placeholder="Email"
               />
-              {loginErrors.identifier && <p className="text-red-500">{loginErrors.identifier.message}</p>}
+              {loginErrors.email && <p className="text-red-500">{loginErrors.email.message}</p>}
               
               <input
                 type="password"

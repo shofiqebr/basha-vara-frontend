@@ -7,7 +7,25 @@ import logo from "../../public/logo.webp";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Load user data from localStorage on mount
+  useEffect(() => {
+    const loginData = localStorage.getItem("loginData");
+    if (loginData) {
+      const user = JSON.parse(loginData);
+      setIsAuthenticated(true);
+      setUserEmail(user.email); // Assuming loginData has an `email` field
+    }
+  }, []);
+
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("loginData");
+    setIsAuthenticated(false);
+    setUserEmail(null);
+  };
 
   return (
     <nav className="bg-[#111827] text-white px-6 py-4 shadow-md">
@@ -32,23 +50,40 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <ul
-            className={`md:flex space-x-6 text-lg absolute md:static top-16 left-0 w-full bg-[#111827] md:bg-transparent p-4 md:p-0 transition-all duration-300 ease-in-out ${
+            className={`md:flex space-x-6 text-lg absolute md:static top-16 left-0 w-full bg-[#1F2937] md:bg-transparent p-4 md:p-0 transition-all duration-300 ease-in-out ${
               isMenuOpen ? "block" : "hidden md:flex"
             }`}
           >
-            <li><Link href="/">Home</Link></li>
-            <li><Link href="/about">About Us</Link></li>
-            <li><Link href="/listings">All Listed Rental Housing</Link></li>
-            <li><Link href="/dashboard">Dashboard</Link></li>
+            <li>
+              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/">Home</Link>
+            </li>
+            <li>
+              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/about">About Us</Link>
+            </li>
+            <li>
+              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/listings">All Listed Rentals</Link>
+            </li>
+            <li>
+              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/dashboard">Dashboard</Link>
+            </li>
             {isAuthenticated ? (
               <>
-                <li><Link href="/profile">My Profile</Link></li>
+                <li className="text-[#D97706] font-semibold">{userEmail}</li>
                 <li>
-                  <button className="text-red-400">Logout</button>
+                  <button 
+                    onClick={handleLogout} 
+                    className="text-[#D97706] hover:text-red-400 transition duration-300"
+                  >
+                    Logout
+                  </button>
                 </li>
               </>
             ) : (
-              <li><Link href="/login">Login / Register</Link></li>
+              <li>
+                <Link className="text-[#D97706] hover:text-white transition duration-300" href="/login">
+                  Login / Register
+                </Link>
+              </li>
             )}
           </ul>
         </div>
