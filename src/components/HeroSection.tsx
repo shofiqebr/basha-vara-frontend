@@ -64,7 +64,7 @@ const HeroSection = () => {
 
   if (isLoading) return <p className="text-white">Loading...</p>;
   if (error) return <p className="text-red-500">{error.message}</p>;
-  console.log(data)
+  // console.log(data)
 
   return (
     <section className="bg-background py-16 px-6 text-center text-white">

@@ -7,8 +7,9 @@ import logo from "../../public/logo.webp";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   // Load user data from localStorage on mount
   useEffect(() => {
@@ -17,6 +18,7 @@ const Navbar = () => {
       const user = JSON.parse(loginData);
       setIsAuthenticated(true);
       setUserEmail(user.email); // Assuming loginData has an `email` field
+      setUserRole(user?.role)
     }
   }, []);
 
@@ -63,6 +65,11 @@ const Navbar = () => {
             <li>
               <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/listings">All Listed Rentals</Link>
             </li>
+            {userRole === 'tenant' && 
+            <li>
+              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/rental-request">Rental Requests</Link>
+            </li>
+            }
             <li>
               <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/dashboard">Dashboard</Link>
             </li>
