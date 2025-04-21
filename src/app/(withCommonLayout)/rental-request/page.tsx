@@ -49,16 +49,6 @@ const MyRentalRequests = () => {
     }
   }, [userId]);
 
-  // useEffect(() => {
-  //   const fetchRequests = async () => {
-  //     const res = await fetch(`http://localhost:5000/api/auth/users`);
-  //     const data = await res.json();
-  //     console.log(data, 'data')
-  //     setRequests(data?.data?.filter((item)=>item._id == userId)); // Adjust based on actual response
-  //   };
-  
-  //   fetchRequests();
-  // }, [reload, userId]);
 
   console.log(requests)
   

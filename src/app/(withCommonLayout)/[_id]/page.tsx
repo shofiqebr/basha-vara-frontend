@@ -48,7 +48,7 @@ const ListingDetails = () => {
     specialRequirements: "",
   });
 
-  console.log(data);
+  // console.log(data);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading listing.</div>;
@@ -107,7 +107,7 @@ const ListingDetails = () => {
   <div className="w-[1000px] h-[400px] overflow-hidden rounded-lg relative">
     <button
       onClick={() =>
-        setCurrentImageIndex((prev) => (prev === 0 ? item.images.length - 1 : prev - 1))
+        setCurrentImageIndex((prev) => (prev === 0 ? item?.images.length - 1 : prev - 1))
       }
       className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10"
     >
@@ -115,7 +115,7 @@ const ListingDetails = () => {
     </button>
 
     <Image
-      src={item.images[currentImageIndex]}
+      src={item?.images[currentImageIndex]}
       alt="House"
       width={1000}
       height={400}

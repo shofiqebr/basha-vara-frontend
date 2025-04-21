@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useEffect, useState } from "react";
 // import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -13,7 +14,11 @@ interface RentalFormInputs {
   amenities: string;
 }
 
+
+
 const PostRentalHouse = () => {
+
+  const [landlordId, setLandlordId] = useState<string>('')
   const {
     register,
     handleSubmit,
@@ -26,20 +31,14 @@ const PostRentalHouse = () => {
   // Watch selected images
   const selectedImages = watch("images", []);
 
-  // useEffect(() => {
-  //   // Only generate previews on the client side
-  //   if (selectedImages.length > 0) {
-  //     const imageUrls = selectedImages.map((file: File) =>
-  //       URL.createObjectURL(file)
-  //     );
-  //     setPreviewImages(imageUrls);
-
-  //     // Cleanup created object URLs when component unmounts
-  //     return () => {
-  //       imageUrls.forEach((url) => URL.revokeObjectURL(url));
-  //     };
-  //   }
-  // }, [selectedImages]);
+  useEffect(() => {
+    const loginData = localStorage.getItem("loginData");
+    if (loginData) {
+      const user = JSON.parse(loginData);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      user?.role == 'landlord' && setLandlordId(user?._id)
+    }
+  }, []);
 
   const onSubmit: SubmitHandler<RentalFormInputs> = async (data) => {
     try {
@@ -71,7 +70,7 @@ const PostRentalHouse = () => {
         numberOfBedrooms: Number(data.bedrooms),
         images: imageUrls, // Cloudinary image URLs
         amenities: data.amenities,
-        landlordId: "67d0cc9bfa39cc20e9aa6b4a", // Replace with actual landlord ID
+        landlordId: landlordId, // Replace with actual landlord ID
       };
 
       // Send data to your backend
