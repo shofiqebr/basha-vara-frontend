@@ -59,7 +59,7 @@ const handleSubmit = async () => {
 
   try {
     const res = await fetch(
-      `/api/landlords/requests/${selectedRequestId}`,
+      `http://localhost:5000/api/landlords/requests/${selectedRequestId}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -71,6 +71,7 @@ const handleSubmit = async () => {
     );
 
     const data = await res.json();
+    console.log(data)
     if (data.status) {
       alert("Request updated successfully");
       closeModal();
@@ -390,7 +391,7 @@ const [editData, setEditData] = useState<Listing>({
 {showModal2 && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div className="bg-white text-black p-6 rounded w-96">
-      <h2 className="text-lg font-bold mb-4">Update Rental Request</h2>
+      <h2 className="text-lg font-bold mb-4">Approve or Reject Rental Request</h2>
 
       <label>Status</label>
       <select

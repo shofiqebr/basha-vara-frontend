@@ -11,7 +11,7 @@ interface LoginInputs {
 }
 
 interface RegisterInputs {
-  username: string;
+  name: string;
   email: string;
   password: string;
   role: "landlord" | "tenant";
@@ -69,6 +69,8 @@ const AuthForm = () => {
         body: JSON.stringify(data),
       });
       const result = await res.json();
+      console.log(result)
+     
       if (!res.ok) throw new Error(result.message || "Registration failed");
       alert("Registration successful! Please login.");
       setIsLogin(true);
@@ -112,8 +114,8 @@ const AuthForm = () => {
             </form>
           ) : (
             <form onSubmit={handleRegisterSubmit(onRegisterSubmit)} className="space-y-4">
-              <input {...registerRegister("username", { required: "Username is required" })} className="w-full p-2 rounded bg-gray-800 text-white" placeholder="Username" />
-              {registerErrors.username && <p className="text-red-500">{registerErrors.username.message}</p>}
+              <input {...registerRegister("name", { required: "Username is required" })} className="w-full p-2 rounded bg-gray-800 text-white" placeholder="Username" />
+              {registerErrors.name && <p className="text-red-500">{registerErrors.name.message}</p>}
               
               <input type="email" {...registerRegister("email", { required: "Email is required" })} className="w-full p-2 rounded bg-gray-800 text-white" placeholder="Email" />
               {registerErrors.email && <p className="text-red-500">{registerErrors.email.message}</p>}
