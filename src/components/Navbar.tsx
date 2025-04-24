@@ -18,7 +18,7 @@ const Navbar = () => {
       const user = JSON.parse(loginData);
       setIsAuthenticated(true);
       setUserEmail(user.email); // Assuming loginData has an `email` field
-      setUserRole(user?.role)
+      setUserRole(user?.role);
     }
   }, []);
 
@@ -34,7 +34,13 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link href="/">
-          <Image className="rounded-full" src={logo} alt="BashaFinder Logo" width={50} height={50} />
+          <Image
+            className="rounded-full"
+            src={logo}
+            alt="BashaFinder Logo"
+            width={50}
+            height={50}
+          />
         </Link>
 
         <div className="flex items-center gap-6">
@@ -52,33 +58,58 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <ul
-            className={`md:flex space-x-6 text-lg absolute md:static top-16 left-0 w-full bg-[#1F2937] md:bg-transparent p-4 md:p-0 transition-all duration-300 ease-in-out ${
+            className={`md:flex space-x-6 text-lg absolute md:static top-16 left-0 w-full bg-[#1F2937] md:bg-transparent p-4 md:p-0 transition-all duration-300 ease-in-out ৳{
               isMenuOpen ? "block" : "hidden md:flex"
             }`}
           >
             <li>
-              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/">Home</Link>
+              <Link
+                className="text-white font-semibold hover:text-[#D97706] transition duration-300"
+                href="/"
+              >
+                Home
+              </Link>
             </li>
             <li>
-              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/about">About Us</Link>
+              <Link
+                className="text-white font-semibold hover:text-[#D97706] transition duration-300"
+                href="/about"
+              >
+                About Us
+              </Link>
             </li>
             <li>
-              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/listings">All Listed Rentals</Link>
+              <Link
+                className="text-white font-semibold hover:text-[#D97706] transition duration-300"
+                href="/listings"
+              >
+                All Listed Rentals
+              </Link>
             </li>
-            {userRole === 'tenant' && 
+            {userRole === "tenant" && (
+              <li>
+                <Link
+                  className="text-white font-semibold hover:text-[#D97706] transition duration-300"
+                  href="/rental-request"
+                >
+                  Rental Requests
+                </Link>
+              </li>
+            )}
             <li>
-              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/rental-request">Rental Requests</Link>
-            </li>
-            }
-            <li>
-              <Link className="text-white font-semibold hover:text-[#D97706] transition duration-300" href="/dashboard">Dashboard</Link>
+              <Link
+                className="text-white font-semibold hover:text-[#D97706] transition duration-300"
+                href="/dashboard"
+              >
+                Dashboard
+              </Link>
             </li>
             {isAuthenticated ? (
               <>
                 <li className="text-[#D97706] font-semibold">{userEmail}</li>
                 <li>
-                  <button 
-                    onClick={handleLogout} 
+                  <button
+                    onClick={handleLogout}
                     className="text-[#D97706] hover:text-red-400 transition duration-300"
                   >
                     Logout
@@ -87,7 +118,10 @@ const Navbar = () => {
               </>
             ) : (
               <li>
-                <Link className="text-[#D97706] hover:text-white transition duration-300" href="/login">
+                <Link
+                  className="text-[#D97706] hover:text-white transition duration-300"
+                  href="/login"
+                >
                   Login / Register
                 </Link>
               </li>

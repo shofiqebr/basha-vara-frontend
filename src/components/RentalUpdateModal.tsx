@@ -13,7 +13,7 @@ interface Props {
   request: RentalRequest;
   userId: string;
   reload: boolean;
-  setReload: React.Dispatch<React.SetStateAction<boolean>>; 
+  setReload: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
   onUpdate: (updated: RentalRequest) => void;
 }
@@ -26,7 +26,7 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tenants/requests/${userId}/${request.listingId}`,
+        `http://localhost:5000/api/tenants/requests/৳{userId}/৳{request.listingId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
       const data = await res.json();
 
       toast.success("Request updated!");
-    //   setReload((prev) => !prev); 
+      //   setReload((prev) => !prev);
       onUpdate(data.updatedRequest);
       onClose();
     } catch (err: any) {
@@ -82,6 +82,5 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
 
 export default RentalUpdateModal;
 function setReload(arg0: (prev: any) => boolean) {
-    throw new Error("Function not implemented.");
+  throw new Error("Function not implemented.");
 }
-

@@ -6,19 +6,18 @@ import useSWR from "swr";
 
 const ListingDetails = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loginData, setLoginData] = useState('')
+  const [loginData, setLoginData] = useState("");
   const params = useParams();
   const _id = params?._id as string;
 
   useEffect(() => {
-      const loginData = localStorage.getItem("loginData");
-      if (loginData) {
-        const parsedData = JSON.parse(loginData);
-        setLoginData(parsedData); 
-      }
-    }, []);
-    // console.log(loginData)
-
+    const loginData = localStorage.getItem("loginData");
+    if (loginData) {
+      const parsedData = JSON.parse(loginData);
+      setLoginData(parsedData);
+    }
+  }, []);
+  // console.log(loginData)
 
   interface Listing {
     id: string;
@@ -61,29 +60,32 @@ const ListingDetails = () => {
 
   const handleSubmitRequest = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/tenants/requests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          listingId: item._id,
-          tenantId: loginData?._id, 
-          status: "pending",
-          additionalMessage: `
-            Move-in Date: ${rentalRequest.moveInDate},
-            Duration: ${rentalRequest.duration},
-            Notes: ${rentalRequest.specialRequirements}
+      const response = await fetch(
+        "http://localhost:5000/api/tenants/requests",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            listingId: item._id,
+            tenantId: loginData?._id,
+            status: "pending",
+            additionalMessage: `
+            Move-in Date: ৳{rentalRequest.moveInDate},
+            Duration: ৳{rentalRequest.duration},
+            Notes: ৳{rentalRequest.specialRequirements}
           `,
-        }),
-      });
-  
+          }),
+        }
+      );
+
       const data = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
       }
-  
+
       alert("Rental request submitted successfully!");
       setIsModalOpen(false);
       setRentalRequest({
@@ -96,53 +98,55 @@ const ListingDetails = () => {
       alert("Failed to submit rental request.");
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center mt-5">
       <div className="bg-gray-800 shadow-lg p-6 rounded-lg text-white border-2 border-yellow-700 flex flex-col items-center w-[1200px] relative">
         {/* Image Section */}
         {/* Image Slider Section */}
-{item.images.length > 1 ? (
-  <div className="w-[1000px] h-[400px] overflow-hidden rounded-lg relative">
-    <button
-      onClick={() =>
-        setCurrentImageIndex((prev) => (prev === 0 ? item?.images.length - 1 : prev - 1))
-      }
-      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10"
-    >
-      ‹
-    </button>
+        {item.images.length > 1 ? (
+          <div className="w-[1000px] h-[400px] overflow-hidden rounded-lg relative">
+            <button
+              onClick={() =>
+                setCurrentImageIndex((prev) =>
+                  prev === 0 ? item?.images.length - 1 : prev - 1
+                )
+              }
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10"
+            >
+              ‹
+            </button>
 
-    <Image
-      src={item?.images[currentImageIndex]}
-      alt="House"
-      width={1000}
-      height={400}
-      className="rounded-md w-full h-full object-cover"
-    />
+            <Image
+              src={item?.images[currentImageIndex]}
+              alt="House"
+              width={1000}
+              height={400}
+              className="rounded-md w-full h-full object-cover"
+            />
 
-    <button
-      onClick={() =>
-        setCurrentImageIndex((prev) => (prev === item.images.length - 1 ? 0 : prev + 1))
-      }
-      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10"
-    >
-      ›
-    </button>
-  </div>
-) : (
-  <div className="w-[1000px] h-[400px] overflow-hidden rounded-lg">
-    <Image
-      src={item.images[0] ?? "/placeholder.jpg"}
-      alt="House"
-      width={1000}
-      height={400}
-      className="rounded-md w-full h-full object-cover"
-    />
-  </div>
-)}
-
+            <button
+              onClick={() =>
+                setCurrentImageIndex((prev) =>
+                  prev === item.images.length - 1 ? 0 : prev + 1
+                )
+              }
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded z-10"
+            >
+              ›
+            </button>
+          </div>
+        ) : (
+          <div className="w-[1000px] h-[400px] overflow-hidden rounded-lg">
+            <Image
+              src={item.images[0] ?? "/placeholder.jpg"}
+              alt="House"
+              width={1000}
+              height={400}
+              className="rounded-md w-full h-full object-cover"
+            />
+          </div>
+        )}
 
         {/* House Info */}
         <h2 className="text-xl font-semibold mt-3 text-yellow-500">
@@ -157,7 +161,7 @@ const ListingDetails = () => {
 
         {/* Rental Request Button */}
         <button
-           onClick={() => {
+          onClick={() => {
             if (loginData?.role === "tenant") {
               setIsModalOpen(true);
             } else {

@@ -37,7 +37,7 @@ const HeroSection = () => {
   // Handle search button click
   const handleSearch = () => {
     router.push(
-      `/listings?location=${searchParams.location}&price=${searchParams.price}&bedrooms=${searchParams.bedrooms}`
+      `/listings?location=৳{searchParams.location}&price=৳{searchParams.price}&bedrooms=৳{searchParams.bedrooms}`
     );
   };
 
@@ -80,7 +80,7 @@ const HeroSection = () => {
         <button
           onClick={() => router.push("/post-rental")}
           disabled={userRole !== "landlord"}
-          className={`bg-accent text-white py-2 px-6 rounded-md border border-gray-500 transition ${
+          className={`bg-accent text-white py-2 px-6 rounded-md border border-gray-500 transition ৳{
             userRole !== "landlord"
               ? "opacity-50 cursor-not-allowed"
               : "hover:bg-yellow-700"
@@ -104,9 +104,9 @@ const HeroSection = () => {
             className="p-2 rounded-md border border-gray-500 bg-gray-800 text-white"
           >
             <option value="">Select Price Range</option>
-            <option value="low">Below $500</option>
-            <option value="medium">$500 - $1000</option>
-            <option value="high">Above $1000</option>
+            <option value="low">Below ৳500</option>
+            <option value="medium">৳500 - ৳1000</option>
+            <option value="high">Above ৳1000</option>
           </select>
           <select
             name="bedrooms"
@@ -131,8 +131,8 @@ const HeroSection = () => {
       <div className="container mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
         {data?.data?.map((item, index) => (
           <div
-          onClick={() => router.push(`/${item?._id}`)}
-          // item={item}
+            onClick={() => router.push(`/৳{item?._id}`)}
+            // item={item}
             key={index}
             className="bg-[#1F2937] shadow-lg border border-gray-600 rounded-2xl overflow-hidden text-white transition transform hover:scale-105 hover:shadow-xl"
           >
@@ -161,9 +161,7 @@ const HeroSection = () => {
               </p>
 
               {/* Button */}
-              <button
-                className="bg-[#D97706] text-white py-2 px-6 mt-4 rounded-lg border border-gray-500 hover:bg-yellow-700 transition"
-              >
+              <button className="bg-[#D97706] text-white py-2 px-6 mt-4 rounded-lg border border-gray-500 hover:bg-yellow-700 transition">
                 View Details
               </button>
             </div>

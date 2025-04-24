@@ -14,11 +14,8 @@ interface RentalFormInputs {
   amenities: string;
 }
 
-
-
 const PostRentalHouse = () => {
-
-  const [landlordId, setLandlordId] = useState<string>('')
+  const [landlordId, setLandlordId] = useState<string>("");
   const {
     register,
     handleSubmit,
@@ -36,7 +33,7 @@ const PostRentalHouse = () => {
     if (loginData) {
       const user = JSON.parse(loginData);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      user?.role == 'landlord' && setLandlordId(user?._id)
+      user?.role == "landlord" && setLandlordId(user?._id);
     }
   }, []);
 
@@ -80,7 +77,7 @@ const PostRentalHouse = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ৳{localStorage.getItem("token")}`,
           },
           body: JSON.stringify(requestBody),
         }
