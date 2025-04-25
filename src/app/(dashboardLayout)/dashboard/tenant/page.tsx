@@ -3,25 +3,42 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
 
+// Define the structure of a rental request
+interface RentalRequest {
+  status: string;
+  additionalMessage?: string;
+  landlordPhoneNumber?: string;
+}
+
+// Define the structure of the user object from the backend
+interface User {
+  _id: string;
+  rentalRequests: RentalRequest[];
+}
+
 const TenantDashboard = () => {
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState<RentalRequest[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const loginData = localStorage.getItem("loginData");
     if (loginData) {
-      const user = JSON.parse(loginData);
-      setUserId(user._id);
+      try {
+        const user = JSON.parse(loginData);
+        setUserId(user._id);
+      } catch (error) {
+        console.error("Failed to parse loginData:", error);
+      }
     }
   }, []);
 
   useEffect(() => {
     if (userId) {
-      fetch("http://localhost:5000/api/auth/users")
+      fetch("https://basha-vara-backend.vercel.app/api/auth/users")
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data?.data)
-          const user = data?.data?.find((item) => item._id === userId);
+          const users: User[] = data?.data || [];
+          const user = users.find((item) => item._id === userId);
           setRequests(user?.rentalRequests || []);
         })
         .catch(() => toast.error("Failed to fetch rental requests"));
@@ -37,13 +54,18 @@ const TenantDashboard = () => {
           <Link href="/" className="hover:bg-gray-700 p-2 rounded">
             🏠 Home
           </Link>
-          <Link href="/tenant/profile" className="hover:bg-gray-700 p-2 rounded">
+          <Link
+            href="/dashboard/tenant/profile"
+            className="hover:bg-gray-700 p-2 rounded"
+          >
             👤 Edit Profile
           </Link>
-          <Link href="/tenant/change-password" className="hover:bg-gray-700 p-2 rounded">
+          <Link
+            href="/dashboard/tenant/changePass"
+            className="hover:bg-gray-700 p-2 rounded"
+          >
             🔐 Change Password
           </Link>
-          {/* Add more actions as needed */}
         </nav>
       </div>
 
@@ -53,11 +75,18 @@ const TenantDashboard = () => {
         <ul className="space-y-4">
           {requests.map((req, i) => (
             <li key={i} className="bg-gray-800 p-4 rounded shadow">
-              <p><strong>Status:</strong> {req.status}</p>
-              <p><strong>Message:</strong> {req.additionalMessage || "N/A"}</p>
+              <p>
+                <strong>Status:</strong> {req.status}
+              </p>
+              <p>
+                <strong>Message:</strong> {req.additionalMessage || "N/A"}
+              </p>
               {req.status === "approved" && (
                 <>
-                  <p><strong>Landlord Phone:</strong> {req.landlordPhoneNumber}</p>
+                  <p>
+                    <strong>Landlord Phone:</strong>{" "}
+                    {req.landlordPhoneNumber || "N/A"}
+                  </p>
                   <button className="mt-2 bg-green-600 hover:bg-green-700 px-3 py-1 rounded">
                     Pay Now
                   </button>

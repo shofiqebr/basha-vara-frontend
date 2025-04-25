@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -7,6 +8,9 @@ interface RentalRequest {
   listingId: string;
   status: "pending" | "approved" | "rejected";
   additionalMessage?: string;
+  moveInDate?: string;
+  rentalDuration?: string;
+  specialRequirements?: string;
 }
 
 interface Props {
@@ -20,17 +24,29 @@ interface Props {
 
 const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
   const [message, setMessage] = useState(request.additionalMessage || "");
+  const [moveInDate, setMoveInDate] = useState(request.moveInDate || "");
+  const [rentalDuration, setRentalDuration] = useState(
+    request.rentalDuration || ""
+  );
+  const [specialRequirements, setSpecialRequirements] = useState(
+    request.specialRequirements || ""
+  );
   const [loading, setLoading] = useState(false);
 
   const handleUpdate = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tenants/requests/${userId}/${request.listingId}`,
+        `https://basha-vara-backend.vercel.app/api/tenants/requests/${userId}/${request.listingId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ additionalMessage: message }),
+          body: JSON.stringify({
+            additionalMessage: message,
+            moveInDate,
+            rentalDuration,
+            specialRequirements,
+          }),
         }
       );
 
@@ -38,7 +54,6 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
       const data = await res.json();
 
       toast.success("Request updated!");
-      //   setReload((prev) => !prev);
       onUpdate(data.updatedRequest);
       onClose();
     } catch (err: any) {
@@ -53,11 +68,37 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
       <div className="bg-gray-800 p-6 rounded-lg w-[400px] text-white">
         <h3 className="text-xl font-bold mb-4">Update Rental Request</h3>
 
+        <label className="block mb-2">Move-in Date</label>
+        <input
+          type="date"
+          value={moveInDate}
+          onChange={(e) => setMoveInDate(e.target.value)}
+          className="w-full p-2 mb-4 bg-gray-700 rounded"
+        />
+
+        <label className="block mb-2">Rental Duration</label>
+        <input
+          type="text"
+          value={rentalDuration}
+          onChange={(e) => setRentalDuration(e.target.value)}
+          className="w-full p-2 mb-4 bg-gray-700 rounded"
+          placeholder="e.g., 6 months"
+        />
+
+        <label className="block mb-2">Special Requirements</label>
+        <textarea
+          value={specialRequirements}
+          onChange={(e) => setSpecialRequirements(e.target.value)}
+          className="w-full p-2 bg-gray-700 rounded mb-4"
+          rows={2}
+        ></textarea>
+
+        <label className="block mb-2">Additional Message</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="w-full p-2 bg-gray-700 rounded mb-4"
-          rows={4}
+          rows={2}
         ></textarea>
 
         <div className="flex justify-end gap-2">
@@ -81,6 +122,3 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
 };
 
 export default RentalUpdateModal;
-function setReload(arg0: (prev: any) => boolean) {
-  throw new Error("Function not implemented.");
-}

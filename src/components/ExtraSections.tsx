@@ -16,7 +16,7 @@ const ExtraSections = () => {
                 { name: "Arman Hossain", text: "Highly recommended! The listings are accurate and reliable." },
               ].map((testimonial, index) => (
                 <div key={index} className="bg-[#111827] p-6 rounded-lg shadow-lg border border-gray-600">
-                  <p className="text-gray-300 italic">"{testimonial.text}"</p>
+                  <p className="text-gray-300 italic">{testimonial.text}</p>
                   <h3 className="text-xl font-semibold text-[#D97706] mt-4">{testimonial.name}</h3>
                 </div>
               ))}

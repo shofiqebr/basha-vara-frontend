@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Footer from "@/components/Footer";
@@ -43,17 +44,19 @@ const AuthForm = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://basha-vara-backend.vercel.app/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
       const result = await res.json();
-      console.log(result)
+      console.log(result);
       if (!res.ok) throw new Error(result.message || "Login failed");
       localStorage.setItem("loginData", JSON.stringify(result?.data));
-      if(result?.data){
-
+      if (result?.data) {
         toast.success("Login successful!", {
           position: "top-right",
           autoClose: 3000,
@@ -63,9 +66,9 @@ const AuthForm = () => {
           theme: "colored",
         });
       }
-      
+
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 500);
     } catch (err: any) {
       setError(err.message);
@@ -78,17 +81,19 @@ const AuthForm = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://basha-vara-backend.vercel.app/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
       const result = await res.json();
-      console.log(result)
-     
-      if (!res.ok) throw new Error(result.message || "Registration failed");
-      if(result?.data){
+      console.log(result);
 
+      if (!res.ok) throw new Error(result.message || "Registration failed");
+      if (result?.data) {
         toast.success("Registration successful!", {
           position: "top-right",
           autoClose: 3000,
@@ -100,7 +105,7 @@ const AuthForm = () => {
       }
       setIsLogin(true);
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 500);
     } catch (err: any) {
       setError(err.message);
@@ -120,62 +125,129 @@ const AuthForm = () => {
           {error && <p className="text-red-500 mb-2">{error}</p>}
 
           {isLogin ? (
-            <form onSubmit={handleLoginSubmit(onLoginSubmit)} className="space-y-4">
+            <form
+              onSubmit={handleLoginSubmit(onLoginSubmit)}
+              className="space-y-4"
+            >
               <input
                 {...loginRegister("email", { required: "Email is required" })}
                 className="w-full p-2 rounded bg-gray-800 text-white"
                 placeholder="Email"
               />
-              {loginErrors.email && <p className="text-red-500">{loginErrors.email.message}</p>}
-              
+              {loginErrors.email && (
+                <p className="text-red-500">{loginErrors.email.message}</p>
+              )}
+
               <input
                 type="password"
-                {...loginRegister("password", { required: "Password is required" })}
+                {...loginRegister("password", {
+                  required: "Password is required",
+                })}
                 className="w-full p-2 rounded bg-gray-800 text-white"
                 placeholder="Password"
               />
-              {loginErrors.password && <p className="text-red-500">{loginErrors.password.message}</p>}
+              {loginErrors.password && (
+                <p className="text-red-500">{loginErrors.password.message}</p>
+              )}
 
-              <button type="submit" className="w-full bg-yellow-500 py-2 rounded-lg" disabled={loading}>
+              <button
+                type="submit"
+                className="w-full bg-yellow-500 py-2 rounded-lg"
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Login"}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleRegisterSubmit(onRegisterSubmit)} className="space-y-4">
-              <input {...registerRegister("name", { required: "Username is required" })} className="w-full p-2 rounded bg-gray-800 text-white" placeholder="Username" />
-              {registerErrors.name && <p className="text-red-500">{registerErrors.name.message}</p>}
-              
-              <input type="email" {...registerRegister("email", { required: "Email is required" })} className="w-full p-2 rounded bg-gray-800 text-white" placeholder="Email" />
-              {registerErrors.email && <p className="text-red-500">{registerErrors.email.message}</p>}
-              
-              <input type="password" {...registerRegister("password", { required: "Password is required" })} className="w-full p-2 rounded bg-gray-800 text-white" placeholder="Password" />
-              {registerErrors.password && <p className="text-red-500">{registerErrors.password.message}</p>}
-              
+            <form
+              onSubmit={handleRegisterSubmit(onRegisterSubmit)}
+              className="space-y-4"
+            >
+              <input
+                {...registerRegister("name", {
+                  required: "Username is required",
+                })}
+                className="w-full p-2 rounded bg-gray-800 text-white"
+                placeholder="Username"
+              />
+              {registerErrors.name && (
+                <p className="text-red-500">{registerErrors.name.message}</p>
+              )}
+
+              <input
+                type="email"
+                {...registerRegister("email", {
+                  required: "Email is required",
+                })}
+                className="w-full p-2 rounded bg-gray-800 text-white"
+                placeholder="Email"
+              />
+              {registerErrors.email && (
+                <p className="text-red-500">{registerErrors.email.message}</p>
+              )}
+
+              <input
+                type="password"
+                {...registerRegister("password", {
+                  required: "Password is required",
+                })}
+                className="w-full p-2 rounded bg-gray-800 text-white"
+                placeholder="Password"
+              />
+              {registerErrors.password && (
+                <p className="text-red-500">
+                  {registerErrors.password.message}
+                </p>
+              )}
+
               <div className="flex gap-4">
                 <label className="flex items-center">
-                  <input type="radio" value="landlord" {...registerRegister("role", { required: "Role is required" })} />
+                  <input
+                    type="radio"
+                    value="landlord"
+                    {...registerRegister("role", {
+                      required: "Role is required",
+                    })}
+                  />
                   <span className="ml-2">Landlord</span>
                 </label>
                 <label className="flex items-center">
-                  <input type="radio" value="tenant" {...registerRegister("role", { required: "Role is required" })} />
+                  <input
+                    type="radio"
+                    value="tenant"
+                    {...registerRegister("role", {
+                      required: "Role is required",
+                    })}
+                  />
                   <span className="ml-2">Tenant</span>
                 </label>
               </div>
-              {registerErrors.role && <p className="text-red-500">{registerErrors.role.message}</p>}
-              
-              <button type="submit" className="w-full bg-yellow-500 py-2 rounded-lg" disabled={loading}>
+              {registerErrors.role && (
+                <p className="text-red-500">{registerErrors.role.message}</p>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-yellow-500 py-2 rounded-lg"
+                disabled={loading}
+              >
                 {loading ? "Registering..." : "Register"}
               </button>
             </form>
           )}
 
-          <button className="w-full mt-4 text-gray-400 hover:text-white underline" onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+          <button
+            className="w-full mt-4 text-gray-400 hover:text-white underline"
+            onClick={() => setIsLogin(!isLogin)}
+          >
+            {isLogin
+              ? "Don't have an account? Register"
+              : "Already have an account? Login"}
           </button>
         </div>
       </div>
       <Footer />
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

@@ -17,7 +17,7 @@ interface RentalFormInputs {
 }
 
 const PostRentalHouse = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [landlordId, setLandlordId] = useState<string>("");
   const {
     register,
@@ -75,7 +75,7 @@ const PostRentalHouse = () => {
 
       // Send data to your backend
       const response = await fetch(
-        "http://localhost:5000/api/landlords/listings",
+        "https://basha-vara-backend.vercel.app/api/landlords/listings",
         {
           method: "POST",
           headers: {
@@ -92,7 +92,6 @@ const PostRentalHouse = () => {
         throw new Error(result.message || "Something went wrong");
       }
 
-     
       toast.success("Listing posted successfully!", {
         position: "top-right",
         autoClose: 3000,
@@ -102,12 +101,11 @@ const PostRentalHouse = () => {
         theme: "colored",
       });
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 500);
-      
     } catch (error) {
       console.error("Error posting listing:", error);
-      
+
       toast.error("Failed to post listing!", {
         position: "top-right",
         autoClose: 3000,

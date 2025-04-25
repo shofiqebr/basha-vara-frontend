@@ -1,14 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
-// interface Listing {
-//   _id: string;
-//   title: string;
-//   description: string;
-//   rent: number;
-// }
 
 interface Listing {
   _id: string;
@@ -19,13 +14,22 @@ interface Listing {
   numberOfBedrooms?: number;
 }
 
+interface TenantInfo {
+  _id: string;
+  name: string;
+  email: string;
+  rentalRequests?: RentalRequest[];
+}
+
 interface RentalRequest {
+  landlordId: string | null;
   _id: string;
   tenantId: string;
-  status: string;
+  status: "pending" | "approved" | "rejected";
   additionalMessage: string;
   landlordPhoneNumber?: string;
   listingId: string;
+  tenantInfo?: TenantInfo;
 }
 
 const LandlordDashboard = () => {
@@ -36,20 +40,28 @@ const LandlordDashboard = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [requests, setRequests] = useState<RentalRequest[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [user, setUser] = useState<any[]>([]);
-
+  const [users, setUsers] = useState<TenantInfo[]>([]);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
     null
   );
   const [status, setStatus] = useState<"approved" | "rejected">("approved");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showModal2, setShowModal2] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const [editData, setEditData] = useState<Listing>({
+    _id: "",
+    rentAmount: 0,
+    description: "",
+    images: [""],
+    location: "",
+    numberOfBedrooms: 0,
+  });
 
   const openModal = (requestId: string) => {
     setSelectedRequestId(requestId);
     setShowModal2(true);
   };
-  console.log(selectedRequestId);
 
   const closeModal = () => {
     setShowModal2(false);
@@ -62,7 +74,7 @@ const LandlordDashboard = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/requests/${selectedRequestId}`,
+        `https://basha-vara-backend.vercel.app/api/landlords/requests/${selectedRequestId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -74,48 +86,17 @@ const LandlordDashboard = () => {
       );
 
       const data = await res.json();
-      console.log(data);
       if (data.status) {
-        alert("Request updated successfully");
+        toast.success("Request updated successfully");
         closeModal();
-        // Optionally: refresh data
       } else {
-        alert("Failed to update");
+        toast.error("Failed to update");
       }
     } catch (err) {
       console.error(err);
-      alert("Server error");
+      toast.error("Server error");
     }
   };
-
-  useEffect(() => {
-    const loginData = localStorage.getItem("loginData");
-    if (loginData) {
-      const user = JSON.parse(loginData);
-      setUserId(user._id);
-    }
-  }, []);
-
-  useEffect(() => {
-    const matched: any[] = [];
-
-    user.forEach((user) => {
-      if (user.rentalRequests && Array.isArray(user.rentalRequests)) {
-        const matchedReqs = user.rentalRequests.filter(
-          (req) => req.landlordId === userId
-        );
-
-        // Optional: Add user info with request if needed
-        matchedReqs.forEach((req) => {
-          matched.push({ ...req, tenantInfo: user });
-        });
-      }
-    });
-
-    setRequests(matched);
-  }, [user, userId]);
-
-  console.log(requests);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -147,37 +128,6 @@ const LandlordDashboard = () => {
     return uploadedUrls;
   };
 
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [editData, setEditData] = useState<Listing>({
-    _id: "",
-    rentAmount: 0,
-    description: "",
-    images: [""],
-  });
-
-  useEffect(() => {
-    if (userId) {
-      if (activeTab === "listings") {
-        fetch("http://localhost:5000/api/landlords/listings")
-          .then((res) => res.json())
-          .then((data) => setListings(data.data))
-          .catch(() => toast.error("Failed to fetch listings"));
-      } else if (activeTab === "requests") {
-        fetch("http://localhost:5000/api/auth/users")
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data?.data);
-            setUser(data?.data);
-            // const user = data?.data?.find((item) => item._id === userId);
-            // setRequests(user?.rentalRequests || []);
-          })
-          .catch(() => toast.error("Failed to fetch rental requests"));
-      }
-    }
-  }, [userId, activeTab]);
-
-  // console.log(listings)
-
   const handleUpdate = (listingId: string) => {
     const selectedListing = listings.find((l) => l._id === listingId);
     if (selectedListing) {
@@ -185,24 +135,28 @@ const LandlordDashboard = () => {
         _id: selectedListing._id,
         rentAmount: selectedListing.rentAmount,
         description: selectedListing.description,
-        images: selectedListing.images ?? [""],
+        images: selectedListing.images,
         location: selectedListing.location,
         numberOfBedrooms: selectedListing.numberOfBedrooms,
       });
       setShowModal(true);
     }
   };
+
   const handleEditSubmit = async () => {
     try {
+      const imageUrls =
+        selectedFiles.length > 0 ? await uploadImages() : editData.images;
+
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/${editData._id}`,
+        `https://basha-vara-backend.vercel.app/api/landlords/listings/${editData._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             rentAmount: editData.rentAmount,
             description: editData.description,
-            images: editData.images,
+            images: imageUrls,
           }),
         }
       );
@@ -210,29 +164,79 @@ const LandlordDashboard = () => {
       if (!res.ok) throw new Error("Failed to update");
 
       const result = await res.json();
-      console.log("Updated:", result);
+      // console.log(result)
       setShowModal(false);
-      // TODO: Refresh listings after update
+      if (result?.data) {
+        toast.success("Listing updated successfully");
+      }
     } catch (err) {
       console.error("Error updating listing", err);
+      toast.error("Update failed");
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/${id}`,
+        `https://basha-vara-backend.vercel.app/api/landlords/listings/${id}`,
         {
           method: "DELETE",
         }
       );
+
       if (!res.ok) throw new Error("Failed to delete listing");
+
       toast.success("Listing deleted");
       setListings((prev) => prev.filter((l) => l._id !== id));
     } catch (error: any) {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    const loginData = localStorage.getItem("loginData");
+    if (loginData) {
+      const user = JSON.parse(loginData);
+      setUserId(user._id);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    if (activeTab === "listings") {
+      fetch("https://basha-vara-backend.vercel.app/api/landlords/listings")
+        .then((res) => res.json())
+        .then((data) => setListings(data.data))
+        .catch(() => toast.error("Failed to fetch listings"));
+    } else if (activeTab === "requests") {
+      fetch("https://basha-vara-backend.vercel.app/api/auth/users")
+        .then((res) => res.json())
+        .then((data) => {
+          setUsers(data.data || []);
+        })
+        .catch(() => toast.error("Failed to fetch rental requests"));
+    }
+  }, [userId, activeTab]);
+  console.log(users);
+
+  useEffect(() => {
+    const matched: RentalRequest[] = [];
+
+    users.forEach((user) => {
+      if (Array.isArray(user.rentalRequests)) {
+        const matchedReqs = user.rentalRequests.filter(
+          (req) => req.landlordId === userId
+        );
+
+        matchedReqs.forEach((req) => {
+          matched.push({ ...req, tenantInfo: user });
+        });
+      }
+    });
+
+    setRequests(matched);
+  }, [users, userId]);
 
   return (
     <div className="flex min-h-screen text-white">
@@ -246,7 +250,7 @@ const LandlordDashboard = () => {
 
         <button
           onClick={() => setActiveTab("listings")}
-          className={`block w-full text-left px-2 py-1 rounded ৳{
+          className={`block w-full text-left px-2 py-1 rounded ${
             activeTab === "listings" ? "bg-gray-700 font-semibold" : ""
           }`}
         >
@@ -255,15 +259,11 @@ const LandlordDashboard = () => {
 
         <button
           onClick={() => setActiveTab("requests")}
-          className={`block w-full text-left px-2 py-1 rounded ৳{
+          className={`block w-full text-left px-2 py-1 rounded ${
             activeTab === "requests" ? "bg-gray-700 font-semibold" : ""
           }`}
         >
           📨 Rental Requests
-        </button>
-
-        <button className="block w-full text-left px-2 py-1 rounded">
-          ⚙️ Settings
         </button>
       </div>
 
@@ -278,7 +278,6 @@ const LandlordDashboard = () => {
                   key={listing._id}
                   className="bg-gray-800 p-4 rounded shadow"
                 >
-                  {/* <h3 className="text-lg font-semibold">{listing.title}</h3> */}
                   <p>{listing.description}</p>
                   <p>{listing.location}</p>
                   <p>{listing.numberOfBedrooms} bedrooms</p>
@@ -301,94 +300,103 @@ const LandlordDashboard = () => {
                   </div>
                 </div>
               ))}
-
-              {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                  <div className="bg-white text-black rounded-lg p-6 w-96">
-                    <h2 className="text-xl font-semibold mb-4">Edit Listing</h2>
-
-                    <label className="block mb-2 text-sm font-medium">
-                      Rent Amount:
-                      <input
-                        type="number"
-                        className="w-full p-2 border rounded"
-                        value={editData.rentAmount}
-                        onChange={(e) =>
-                          setEditData({
-                            ...editData,
-                            rentAmount: Number(e.target.value),
-                          })
-                        }
-                      />
-                    </label>
-
-                    <label className="block mb-2 text-sm font-medium">
-                      Description:
-                      <textarea
-                        className="w-full p-2 border rounded"
-                        value={editData.description}
-                        onChange={(e) =>
-                          setEditData({
-                            ...editData,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                    </label>
-
-                    {/*  <label className="block mb-4 text-sm font-medium">
-        Image URL:
-        <input
-          type="text"
-          className="w-full p-2 border rounded"
-          value={editData.images[0]}
-          onChange={(e) =>
-            setEditData({ ...editData, images: [e.target.value] })
-          }
-        />
-      </label> */}
-
-                    <div>
-                      <label className="block text-[#6B7280]">
-                        Upload Images
-                      </label>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="w-full p-2 rounded bg-[#111827] text-white"
-                      />
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {selectedFiles.map((file, index) => (
-                          <img
-                            key={index}
-                            src={URL.createObjectURL(file)}
-                            alt={`Preview ৳{index}`}
-                            className="w-16 h-16 object-cover rounded"
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-2">
-                      <button
-                        className="bg-gray-500 text-white px-4 py-2 rounded"
-                        onClick={() => setShowModal(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="bg-blue-600 text-white px-4 py-2 rounded"
-                        onClick={handleEditSubmit}
-                      >
-                        Update
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
+
+            {showModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+                <div className="bg-white text-black rounded-lg p-6 w-full max-w-md relative overflow-y-auto max-h-[90vh]">
+                  <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+                    Edit Listing
+                  </h2>
+
+                  {/* Rent Amount */}
+                  <label className="block mb-4 text-sm font-medium text-gray-700">
+                    Rent Amount:
+                    <input
+                      type="number"
+                      className="w-full p-2 mt-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={editData.rentAmount}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          rentAmount: Number(e.target.value),
+                        })
+                      }
+                    />
+                  </label>
+
+                  {/* Description */}
+                  <label className="block mb-4 text-sm font-medium text-gray-700">
+                    Description:
+                    <textarea
+                      className="w-full p-2 mt-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                      value={editData.description}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </label>
+
+                  {/* Upload Images */}
+                  <label className="block mb-4 text-sm font-medium text-gray-700">
+                    Upload Images:
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="mt-1"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+
+                  {/* Image Preview */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {selectedFiles?.map((file, index) => (
+                      <div
+                        key={index}
+                        className="relative w-20 h-20 rounded overflow-hidden border"
+                      >
+                        <Image
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${index}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button
+                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                      onClick={handleEditSubmit}
+                    >
+                      Update
+                    </button>
+                  </div>
+
+                  {/* Optional close (X) button */}
+                  <button
+                    className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl"
+                    onClick={() => setShowModal(false)}
+                    aria-label="Close"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <>
@@ -412,9 +420,6 @@ const LandlordDashboard = () => {
                         className="bg-green-600 px-3 py-1 rounded"
                       >
                         Approve
-                      </button>
-                      <button className="bg-red-600 px-3 py-1 rounded">
-                        Reject
                       </button>
                     </div>
                   )}

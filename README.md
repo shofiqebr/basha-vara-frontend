@@ -34,3 +34,36 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# 🏠 Basha Vara - Frontend
+
+This is the frontend for **Basha Vara**, a rental listing platform that connects tenants and landlords. The frontend is built using [Next.js](https://nextjs.org), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS](https://tailwindcss.com), and deployed on [Vercel](https://vercel.com).
+
+---
+
+## 🚀 Live Demo
+
+🔗 [https://basha-vara-frontend.vercel.app](https://basha-vara-frontend.vercel.app)
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Image Hosting**: Cloudinary (optional)
+- **API**: RESTful backend with Express.js
+- **Deployment**: Vercel
+
+---
+
+## 📁 Folder Structure (Important)
+
+```bash
+/app              # All routes and pages using the app directory
+/components       # Shared UI components
+/hooks            # Custom React hooks (if any)
+/styles           # Tailwind and global styles
+/utils            # Utility functions and fetch helpers
+/public           # Static assets
