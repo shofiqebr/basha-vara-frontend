@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import useSWR from "swr";
 
 const ListingDetails = () => {
@@ -56,7 +57,7 @@ const ListingDetails = () => {
   const item = data?.data?.find((listing) => listing._id === _id);
   // console.log(item)
 
-  if (!item) return <div>Listing not found.</div>;
+  if (!item) return <div className="min-h-[600px] flex items-center justify-center text-white text-xl">Listing not found.</div>;
 
   const handleSubmitRequest = async () => {
     try {
@@ -86,7 +87,15 @@ const ListingDetails = () => {
         throw new Error(data.message || "Something went wrong");
       }
 
-      alert("Rental request submitted successfully!");
+     
+      toast.success("Rental request submitted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
       setIsModalOpen(false);
       setRentalRequest({
         moveInDate: "",
@@ -95,7 +104,15 @@ const ListingDetails = () => {
       });
     } catch (error) {
       console.error("Error submitting rental request:", error);
-      alert("Failed to submit rental request.");
+      
+      toast.error("Failed to submit rental request!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
     }
   };
 
@@ -165,7 +182,15 @@ const ListingDetails = () => {
             if (loginData?.role === "tenant") {
               setIsModalOpen(true);
             } else {
-              alert("Only tenants can request rentals.");
+            
+              toast.success("Only tenants can request rentals!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "colored",
+              });
             }
           }}
           className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 mt-4 rounded-md transition"

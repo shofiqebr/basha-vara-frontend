@@ -26,7 +26,7 @@ const RentalUpdateModal = ({ request, userId, onClose, onUpdate }: Props) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tenants/requests/৳{userId}/৳{request.listingId}`,
+        `http://localhost:5000/api/tenants/requests/${userId}/${request.listingId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

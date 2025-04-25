@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { toast } from "react-toastify";
+
+
 
 interface Listing {
   id: string;
@@ -11,10 +14,15 @@ interface Listing {
   location: string;
   rentAmount: number;
   numberOfBedrooms: number;
+  createdAt: string;
 }
 
 const HeroSection = () => {
   const router = useRouter();
+
+  const [visibleListings, setVisibleListings] = useState<Listing[]>([]);
+
+ 
 
   // State for search parameters
   const [searchParams, setSearchParams] = useState<{
@@ -37,7 +45,7 @@ const HeroSection = () => {
   // Handle search button click
   const handleSearch = () => {
     router.push(
-      `/listings?location=৳{searchParams.location}&price=৳{searchParams.price}&bedrooms=৳{searchParams.bedrooms}`
+      `/listings?location=${searchParams.location}&price=${searchParams.price}&bedrooms=${searchParams.bedrooms}`
     );
   };
 
@@ -62,12 +70,23 @@ const HeroSection = () => {
     { refreshInterval: 5000 } // Re-fetch every 5 seconds
   );
 
+  useEffect(() => {
+    if (data?.data) {
+      const sorted = [...data.data].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setVisibleListings(sorted.slice(0, 6));
+    }
+  }, [data]);
+
   if (isLoading) return <p className="text-white">Loading...</p>;
   if (error) return <p className="text-red-500">{error.message}</p>;
   // console.log(data)
 
+  
+
   return (
-    <section className="bg-background py-16 px-6 text-center text-white">
+    <section className="bg-background py-16 px-6 text-center text-white min-h-screen">
       <div className="container mx-auto">
         <h1 className="text-4xl font-bold text-white mb-4">
           Find Your Perfect Rental House Today!
@@ -77,17 +96,34 @@ const HeroSection = () => {
         </p>
 
         {/* CTA Button */}
-        <button
-          onClick={() => router.push("/post-rental")}
-          disabled={userRole !== "landlord"}
-          className={`bg-accent text-white py-2 px-6 rounded-md border border-gray-500 transition ৳{
-            userRole !== "landlord"
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-yellow-700"
-          }`}
-        >
-          Post Rental House Info
-        </button>
+        <div className="flex justify-center relative group">
+  <button
+    onClick={() => {
+      if (userRole !== "landlord") {
+        toast.info("Only landlords can post rental information.");
+        return;
+      }
+      router.push("/post-rental");
+    }}
+    disabled={userRole !== "landlord"}
+    className={`bg-accent text-white py-2 px-6 rounded-md border border-gray-500 transition ${
+      userRole !== "landlord"
+        ? "opacity-50 cursor-not-allowed"
+        : "hover:bg-yellow-700"
+    }`}
+  >
+    Post Rental House Info
+  </button>
+
+  {/* Tooltip below the button */}
+  {userRole !== "landlord" && (
+    <span className="absolute -bottom-8 text-sm text-white bg-gray-700 px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      Only landlords can post rentals
+    </span>
+  )}
+</div>
+
+
 
         {/* Search Bar */}
         <div className="mt-6 flex flex-wrap justify-center gap-4">
@@ -128,20 +164,21 @@ const HeroSection = () => {
       </div>
 
       {/* Rental House Cards */}
-      <div className="container mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-        {data?.data?.map((item, index) => (
+      <div className="container mx-auto mt-12">
+      {/* Rental House Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {visibleListings.map((item, index) => (
           <div
-            onClick={() => router.push(`/৳{item?._id}`)}
-            // item={item}
+            onClick={() => router.push(`/${item?._id}`)}
             key={index}
-            className="bg-[#1F2937] shadow-lg border border-gray-600 rounded-2xl overflow-hidden text-white transition transform hover:scale-105 hover:shadow-xl"
+            className="bg-[#1F2937] shadow-lg border border-gray-600 rounded-2xl overflow-hidden text-white transition transform hover:scale-105 hover:shadow-xl cursor-pointer"
           >
             {/* Image */}
             <div className="relative w-full h-80">
               <img
                 src={item.images[0] || ""}
                 alt="House"
-                className="w-full h-full rounded-t-2xl"
+                className="w-full h-full object-cover rounded-t-2xl"
               />
             </div>
 
@@ -154,13 +191,12 @@ const HeroSection = () => {
               </h2>
               <p className="text-gray-300 mt-1">{item.location}</p>
               <p className="text-white font-bold text-lg mt-1">
-                ৳ {item.rentAmount} / month
+                $ {item.rentAmount} / month
               </p>
               <p className="text-gray-400 text-sm">
                 🛏️ {item.numberOfBedrooms} Bedrooms
               </p>
 
-              {/* Button */}
               <button className="bg-[#D97706] text-white py-2 px-6 mt-4 rounded-lg border border-gray-500 hover:bg-yellow-700 transition">
                 View Details
               </button>
@@ -168,6 +204,20 @@ const HeroSection = () => {
           </div>
         ))}
       </div>
+
+      {/* Show All Button */}
+      {(data?.data?.length ?? 0) > 6 && (
+
+        <div className="flex justify-center mt-10">
+          <button
+            onClick={() => router.push("/listings")}
+            className="bg-[#D97706] text-white py-2 px-8 rounded-lg border border-gray-500 hover:bg-yellow-700 transition"
+          >
+            Show All Listings
+          </button>
+        </div>
+      )}
+    </div>
     </section>
   );
 };

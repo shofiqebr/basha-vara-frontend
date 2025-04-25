@@ -29,6 +29,8 @@ const Navbar = () => {
     setUserEmail(null);
   };
 
+  
+
   return (
     <nav className="bg-[#111827] text-white px-6 py-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -58,7 +60,7 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <ul
-            className={`md:flex space-x-6 text-lg absolute md:static top-16 left-0 w-full bg-[#1F2937] md:bg-transparent p-4 md:p-0 transition-all duration-300 ease-in-out ৳{
+            className={`md:flex space-x-6 text-lg absolute md:static top-16 left-0 w-full bg-[#1F2937] md:bg-transparent p-4 md:p-0 transition-all duration-300 ease-in-out ${
               isMenuOpen ? "block" : "hidden md:flex"
             }`}
           >

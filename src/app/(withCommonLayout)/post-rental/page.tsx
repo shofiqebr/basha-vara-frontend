@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 // import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
 
 interface RentalFormInputs {
   location: string;
@@ -15,6 +17,7 @@ interface RentalFormInputs {
 }
 
 const PostRentalHouse = () => {
+  const router = useRouter()
   const [landlordId, setLandlordId] = useState<string>("");
   const {
     register,
@@ -77,7 +80,7 @@ const PostRentalHouse = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ৳{localStorage.getItem("token")}`,
+            Authorization: `Bearer {localStorage.getItem("token")}`,
           },
           body: JSON.stringify(requestBody),
         }
@@ -89,10 +92,30 @@ const PostRentalHouse = () => {
         throw new Error(result.message || "Something went wrong");
       }
 
-      alert("Listing posted successfully!");
+     
+      toast.success("Listing posted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+      setTimeout(() => {
+        router.push('/');
+      }, 500);
+      
     } catch (error) {
       console.error("Error posting listing:", error);
-      alert("Failed to post listing");
+      
+      toast.error("Failed to post listing!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
     }
   };
 

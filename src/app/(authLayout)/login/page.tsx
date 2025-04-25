@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface LoginInputs {
   email: string;
@@ -47,11 +49,24 @@ const AuthForm = () => {
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      // console.log(result)
+      console.log(result)
       if (!res.ok) throw new Error(result.message || "Login failed");
       localStorage.setItem("loginData", JSON.stringify(result?.data));
-      alert("Login successful!");
-      router.push('/')
+      if(result?.data){
+
+        toast.success("Login successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
+      }
+      
+      setTimeout(() => {
+        router.push('/');
+      }, 500);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -72,8 +87,21 @@ const AuthForm = () => {
       console.log(result)
      
       if (!res.ok) throw new Error(result.message || "Registration failed");
-      alert("Registration successful! Please login.");
+      if(result?.data){
+
+        toast.success("Registration successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
+      }
       setIsLogin(true);
+      setTimeout(() => {
+        router.push('/');
+      }, 500);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -147,6 +175,7 @@ const AuthForm = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer/>
     </>
   );
 };

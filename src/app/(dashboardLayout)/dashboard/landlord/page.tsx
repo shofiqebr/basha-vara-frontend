@@ -62,7 +62,7 @@ const LandlordDashboard = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/requests/৳{selectedRequestId}`,
+        `http://localhost:5000/api/landlords/requests/${selectedRequestId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -195,7 +195,7 @@ const LandlordDashboard = () => {
   const handleEditSubmit = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/৳{editData._id}`,
+        `http://localhost:5000/api/landlords/listings/${editData._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -221,7 +221,7 @@ const LandlordDashboard = () => {
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/৳{id}`,
+        `http://localhost:5000/api/landlords/listings/${id}`,
         {
           method: "DELETE",
         }

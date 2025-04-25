@@ -10,22 +10,46 @@ const AdminDashboard = () => {
   const [activeView, setActiveView] = useState<ViewType>("users");
   const [users, setUsers] = useState([]);
   const [listings, setListings] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     // Fetch all users
-    fetch("http://localhost:5000/api/auth/users")
+    fetch("http://localhost:5000/api/admin/users")
       .then((res) => res.json())
       .then((data) => setUsers(data.data))
       .catch(() => toast.error("Failed to fetch users"));
 
     // Fetch all listings
-    fetch("http://localhost:5000/api/landlords/listings")
+    fetch("http://localhost:5000/api/admin/listings")
       .then((res) => res.json())
       .then((data) => setListings(data.data))
       .catch(() => toast.error("Failed to fetch listings"));
   }, []);
 
-  console.log(listings);
+  // console.log(listings);
+
+ 
+
+const handleEdit = (user) => {
+  setEditingUser(user);
+  setShowModal(true);
+};
+
+const handleDeleteUser = async (id: string) => {
+  if (confirm("Are you sure you want to delete this user?")) {
+    try {
+      await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+        method: "DELETE",
+      });
+      toast.success("User deleted successfully");
+      setUsers(users.filter((u) => u._id !== id));
+    } catch {
+      toast.error("Failed to delete user");
+    }
+  }
+};
+
 
   const [editingListing, setEditingListing] = useState(null);
   const [formData, setFormData] = useState({
@@ -54,7 +78,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/${editingListing._id}`,
+        `http://localhost:5000/api/admin/listings/${editingListing._id}`,
         {
           method: "PUT",
           headers: {
@@ -87,7 +111,7 @@ const AdminDashboard = () => {
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/${id}`,
+        `http://localhost:5000/api/admin/listings/${id}`,
         {
           method: "DELETE",
         }
@@ -104,37 +128,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleUpdate = async (id: string) => {
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/৳{id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            rentAmount: 27000,
-            description: "Updated description with new features",
-            location: "telavbo",
-          }),
-        }
-      );
-      const result = await res.json();
-      if (res.ok) {
-        toast.success("Listing updated!");
-        // Re-fetch listings or manually update state
-        const updated = listings.map((l) =>
-          l._id === id ? { ...l, ...result.data } : l
-        );
-        setListings(updated);
-      } else {
-        toast.error(result.message || "Failed to update listing");
-      }
-    } catch (error) {
-      toast.error("Error updating listing");
-    }
-  };
 
   const renderContent = () => {
     switch (activeView) {
@@ -144,25 +137,126 @@ const AdminDashboard = () => {
             <h2 className="text-2xl font-bold mb-4">User Management</h2>
             <ul className="space-y-4">
               {users.map((user, i) => (
-                <li key={i} className="bg-gray-800 p-4 rounded shadow">
-                  <p>
-                    <strong>Name:</strong> {user.name}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {user.email}
-                  </p>
-                  <p>
-                    <strong>Role:</strong> {user.role}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{" "}
-                    {user.isActive ? "Active" : "Inactive"}
-                  </p>
+                <li key={i} className="bg-gray-800 p-4 rounded shadow space-y-1">
+                  <p><strong>Name:</strong> {user.name}</p>
+                  <p><strong>Email:</strong> {user.email}</p>
+                  <p><strong>Role:</strong> {user.role}</p>
+                  <p><strong>Status:</strong> {user.isActive ? "Active" : "Inactive"}</p>
+      
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={() => handleEdit(user)}
+                      className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(user._id)}
+                      className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
+
+            {/* update user data */}
+
+            {showModal && editingUser && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white text-black p-6 rounded-md w-96">
+      <h3 className="text-xl font-bold mb-4">Edit User</h3>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const updatedUser = {
+            name: editingUser.name,
+            email: editingUser.email,
+            role: editingUser.role,
+            isActive: editingUser.isActive,
+          };
+
+          try {
+            const res = await fetch(
+              `http://localhost:5000/api/admin/users/${editingUser._id}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedUser),
+              }
+            );
+
+            if (res.ok) {
+              toast.success("User updated");
+              setUsers((prev) =>
+                prev.map((u) =>
+                  u._id === editingUser._id ? { ...u, ...updatedUser } : u
+                )
+              );
+              setShowModal(false);
+            } else {
+              toast.error("Update failed");
+            }
+          } catch {
+            toast.error("Update error");
+          }
+        }}
+      >
+        <input
+          type="text"
+          className="w-full mb-2 p-2 border rounded"
+          value={editingUser.name}
+          onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+        />
+        <input
+          type="email"
+          className="w-full mb-2 p-2 border rounded"
+          value={editingUser.email}
+          onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+        />
+        <select
+          className="w-full mb-2 p-2 border rounded"
+          value={editingUser.role}
+          onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+        >
+          <option value="admin">Admin</option>
+          <option value="landlord">Landlord</option>
+          <option value="tenant">Tenant</option>
+        </select>
+        <label className="flex items-center gap-2 mb-2">
+          <input
+            type="checkbox"
+            checked={editingUser.isActive}
+            onChange={(e) =>
+              setEditingUser({ ...editingUser, isActive: e.target.checked })
+            }
+          />
+          Active
+        </label>
+        <div className="flex justify-end gap-2">
+          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowModal(false)}
+            className="bg-gray-400 text-black px-4 py-2 rounded"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
           </section>
         );
+      
       case "listings":
         return (
           <section>
@@ -266,7 +360,7 @@ const AdminDashboard = () => {
         return (
           <section>
             <h2 className="text-2xl font-bold mb-4">Admin Profile</h2>
-            <p>This is where you can show and update admin profile info.</p>
+            <p>Admin information</p>
           </section>
         );
       default:

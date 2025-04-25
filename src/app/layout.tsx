@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
 // import Navbar from "../components/Navbar";
 // import Footer from "../components/Footer";
 
@@ -27,12 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className="bg-[#1F2937]"
+        className="bg-[#1F2937] min-h-screen"
         suppressHydrationWarning
       >
         {/* <Navbar /> */}
         <div className="min-h-screen">{children}</div>
         {/* <Footer /> */}
+        <ToastContainer />
       </body>
     </html>
   );
