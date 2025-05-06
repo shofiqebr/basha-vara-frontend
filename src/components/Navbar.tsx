@@ -167,7 +167,7 @@ const Navbar = () => {
               </>
             ) : (
               <li>
-                <Link className="text-[#D97706] hover:text-white transition duration-300" href="/login">
+                <Link className="text-yellow-500 font-bold hover:text-white transition duration-300" href="/login">
                   Login / Register
                 </Link>
               </li>

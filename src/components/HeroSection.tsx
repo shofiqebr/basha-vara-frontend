@@ -221,66 +221,68 @@ const HeroSection = () => {
       </div>
 
       {/* Rental House Cards */}
-      <div className="container mx-auto mt-12">
-
-      <h2 className="text-3xl font-bold text-[#D97706] mb-6">Latest Listings</h2>
-            <p className="text-lg text-gray-300 mb-12">
-              See the latest Listings in here with facilities
-            </p>
-        {/* Rental House Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {visibleListings.map((item, index) => (
-            <div
-              onClick={() => router.push(`/${item?._id}`)}
-              key={index}
-              className="bg-[#1F2937] shadow-lg border border-gray-600 rounded-2xl overflow-hidden text-white transition transform hover:scale-105 hover:shadow-xl cursor-pointer"
-            >
-              {/* Image */}
-              <div className="relative w-full h-80">
-                <Image
-                  src={item.images[0] || "/placeholder.jpg"} // fallback in case image is missing
-                  alt="House"
-                  fill
-                  className="object-cover rounded-t-2xl"
-                  priority // optional for better LCP
-                />
-              </div>
-
-              {/* Content */}
-              <div className="p-5 flex flex-col">
-                <h2 className="text-2xl font-semibold text-[#D97706] whitespace-nowrap overflow-hidden text-ellipsis">
-                  {item.description.length > 30
-                    ? item.description.slice(0, 30) + "..."
-                    : item.description}
-                </h2>
-                <p className="text-gray-300 mt-1">{item.location}</p>
-                <p className="text-white font-bold text-lg mt-1">
-                  ৳ {item.rentAmount} / month
-                </p>
-                <p className="text-gray-400 text-sm">
-                  🛏️ {item.numberOfBedrooms} Bedrooms
-                </p>
-
-                <button className="bg-[#D97706] text-white py-2 px-6 mt-4 rounded-lg border border-gray-500 hover:bg-yellow-700 transition">
-                  View Details
-                </button>
-              </div>
-            </div>
-          ))}
+     {/* Rental House Cards */}
+<div className="container mx-auto mt-12 bg-gray-900 py-16 px-4">
+  <h2 className="text-3xl font-bold text-yellow-500 mb-6">Latest Listings</h2>
+  <p className="text-lg text-gray-300 mb-12">
+    See the latest Listings here with facilities
+  </p>
+  
+  {/* Rental House Cards */}
+  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {visibleListings.map((item, index) => (
+      <div
+        onClick={() => router.push(`/${item?._id}`)}
+        key={index}
+        className="bg-gray-800 shadow-lg border border-gray-700 rounded-2xl overflow-hidden text-white transition transform hover:scale-105 hover:shadow-xl cursor-pointer"
+      >
+        {/* Image */}
+        <div className="relative w-full h-80">
+          <Image
+            src={item.images[0] || "/placeholder.jpg"} // fallback in case image is missing
+            alt="House"
+            fill
+            className="object-cover rounded-t-2xl"
+            priority // optional for better LCP
+          />
         </div>
 
-        {/* Show All Button */}
-        {(data?.data?.length ?? 0) > 8 && (
-          <div className="flex justify-center mt-10">
-            <button
-              onClick={() => router.push("/listings")}
-              className="bg-[#D97706] text-white py-2 px-8 rounded-lg border border-gray-500 hover:bg-yellow-700 transition"
-            >
-              Show All Listings
-            </button>
-          </div>
-        )}
+        {/* Content */}
+        <div className="p-5 flex flex-col">
+          <h2 className="text-2xl font-semibold text-yellow-400 whitespace-nowrap overflow-hidden text-ellipsis">
+            {item.description.length > 30
+              ? item.description.slice(0, 30) + "..."
+              : item.description}
+          </h2>
+          <p className="text-gray-300 mt-1">{item.location}</p>
+          <p className="text-white font-bold text-lg mt-1">
+            ৳ {item.rentAmount} / month
+          </p>
+          <p className="text-gray-400 text-sm">
+            🛏️ {item.numberOfBedrooms} Bedrooms
+          </p>
+
+          <button className="bg-yellow-500 text-white py-2 px-6 mt-4 rounded-lg border border-gray-500 hover:bg-yellow-600 transition">
+            View Details
+          </button>
+        </div>
       </div>
+    ))}
+  </div>
+
+  {/* Show All Button */}
+  {(data?.data?.length ?? 0) > 8 && (
+    <div className="flex justify-center mt-10">
+      <button
+        onClick={() => router.push("/listings")}
+        className="bg-yellow-500 text-white py-2 px-8 rounded-lg border border-gray-500 hover:bg-yellow-600 transition"
+      >
+        Show All Listings
+      </button>
+    </div>
+  )}
+</div>
+
     </section>
   );
 };
