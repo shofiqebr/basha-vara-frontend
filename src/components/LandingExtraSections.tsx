@@ -5,7 +5,7 @@ import React from "react";
 
 const LandingExtraSections = () => {
   return (
-    <div className="space-y-24 px-6 py-16">
+    <div className="space-y-10 px-6 py-10">
       {/* Offers Section */}
       <section className="bg-gray-900 text-white py-16 px-4 mx-2 rounded-xl   text-center shadow-md">
         <h2 className="text-3xl font-bold text-yellow-500 mb-4">🔥 Current Offers & Promotions</h2>

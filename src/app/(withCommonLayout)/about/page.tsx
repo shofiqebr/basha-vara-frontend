@@ -16,7 +16,7 @@ const AboutPage = () => {
         <section className="mb-12 text-center">
           <p className="text-lg text-gray-300 leading-relaxed mb-6">
             <span className="text-yellow-500 font-semibold">Basha Vara</span> is more than just a rental platform —
-            it's a modern solution for renters and landlords in Bangladesh. Whether you're seeking your next
+            it&apos;s a modern solution for renters and landlords in Bangladesh. Whether you&apos;re seeking your next
             home or listing a property, our platform simplifies the process with trust, transparency, and technology.
           </p>
         </section>

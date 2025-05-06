@@ -59,7 +59,7 @@ const ListingDetails = () => {
     fetch(url, { cache: "no-store" }).then((res) => res.json());
 
   const { data, error, isLoading } = useSWR(
-    "http://localhost:5000/api/landlords/listings",
+    "https://basha-vara-backend.vercel.app/api/landlords/listings",
     fetcher,
     { refreshInterval: 5000 }
   );
@@ -84,7 +84,7 @@ const ListingDetails = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/tenants/requests",
+        "https://basha-vara-backend.vercel.app/api/tenants/requests",
         {
           method: "POST",
           headers: {

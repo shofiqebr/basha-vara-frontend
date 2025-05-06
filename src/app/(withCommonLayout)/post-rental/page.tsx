@@ -75,7 +75,7 @@ const PostRentalHouse = () => {
 
       // Send data to your backend
       const response = await fetch(
-        "http://localhost:5000/api/landlords/listings",
+        "https://basha-vara-backend.vercel.app/api/landlords/listings",
         {
           method: "POST",
           headers: {

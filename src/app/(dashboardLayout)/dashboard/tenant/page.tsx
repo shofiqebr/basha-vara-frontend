@@ -34,7 +34,7 @@ const TenantDashboard = () => {
 
   useEffect(() => {
     if (userId) {
-      fetch("http://localhost:5000/api/auth/users")
+      fetch("https://basha-vara-backend.vercel.app/api/auth/users")
         .then((res) => res.json())
         .then((data) => {
           const users: User[] = data?.data || [];

@@ -74,7 +74,7 @@ const LandlordDashboard = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/requests/${selectedRequestId}`,
+        `https://basha-vara-backend.vercel.app/api/landlords/requests/${selectedRequestId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -149,7 +149,7 @@ const LandlordDashboard = () => {
         selectedFiles.length > 0 ? await uploadImages() : editData.images;
 
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/${editData._id}`,
+        `https://basha-vara-backend.vercel.app/api/landlords/listings/${editData._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -178,7 +178,7 @@ const LandlordDashboard = () => {
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/landlords/listings/${id}`,
+        `https://basha-vara-backend.vercel.app/api/landlords/listings/${id}`,
         {
           method: "DELETE",
         }
@@ -205,12 +205,12 @@ const LandlordDashboard = () => {
     if (!userId) return;
 
     if (activeTab === "listings") {
-      fetch("http://localhost:5000/api/landlords/listings")
+      fetch("https://basha-vara-backend.vercel.app/api/landlords/listings")
         .then((res) => res.json())
         .then((data) => setListings(data.data))
         .catch(() => toast.error("Failed to fetch listings"));
     } else if (activeTab === "requests") {
-      fetch("http://localhost:5000/api/auth/users")
+      fetch("https://basha-vara-backend.vercel.app/api/auth/users")
         .then((res) => res.json())
         .then((data) => {
           setUsers(data.data || []);
