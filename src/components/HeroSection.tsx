@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Link from "next/link";
 
 interface Listing {
   _id: string;
@@ -82,18 +85,78 @@ const HeroSection = () => {
   // console.log(data)
 
   return (
-    <section className="bg-background py-16 px-6 text-center text-white min-h-screen">
+    <section className="bg-background pt-10 px-6 text-center text-white min-h-screen">
       <div className="container mx-auto">
-        <h1 className="text-4xl font-bold text-white mb-4">
-          Find Your Perfect Rental House Today!
-        </h1>
-        <p className="text-lg text-gray-300 mb-6">
-          Explore the best rental houses in your desired location.
-        </p>
+      <div
+  className="text-white py-16 px-4 md:px-8 lg:px-16 rounded-xl relative overflow-hidden"
+  style={{
+    backgroundColor: '#111827',
+    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 24 24' fill='%23D97706' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-opacity='0.05' d='M12 3L2 12h3v9h6v-6h2v6h6v-9h3L12 3z'/%3E%3C/svg%3E")`,
+  }}
+>
+  <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+    {/* Hero Text */}
+    <div>
+      <h1 className="text-4xl md:text-5xl font-bold text-yellow-500 mb-6 leading-tight">
+        Find Your Perfect Rental House Today!
+      </h1>
+      <p className="text-lg text-gray-300 mb-6">
+        Explore the best rental houses in your desired location. Fast,
+        simple, and secure — only on Basha Vara.
+      </p>
+      <Link href="/listings">
+        <button className="mt-4 bg-yellow-600 hover:bg-yellow-700 transition px-6 py-3 rounded-lg text-white font-semibold">
+          Browse All Listings
+        </button>
+      </Link>
+    </div>
+
+    {/* Carousel */}
+    <div className="rounded-lg overflow-hidden shadow-lg border border-gray-700">
+      <Carousel
+        autoPlay
+        infiniteLoop
+        interval={4000}
+        showThumbs={false}
+        showStatus={false}
+        showIndicators={true}
+        swipeable
+        emulateTouch
+        className="rounded-lg"
+      >
+        <div>
+          <img
+            src="https://res.cloudinary.com/dal1rjdwl/image/upload/v1745546104/mt4sswfa7uo2yyhohhdj.jpg"
+            alt="Rental House 1"
+            className="h-[400px] w-full object-cover"
+          />
+        </div>
+        <div>
+          <img
+            src="https://res.cloudinary.com/dal1rjdwl/image/upload/v1744253229/cxwtjsmebew9drwcc8mp.jpg"
+            alt="Rental House 2"
+            className="h-[400px] w-full object-cover"
+          />
+        </div>
+        <div>
+          <img
+            src="https://res.cloudinary.com/dal1rjdwl/image/upload/v1744253791/lwbvfxxzazl9vqwb3o41.jpg"
+            alt="Rental House 3"
+            className="h-[400px] w-full object-cover"
+          />
+        </div>
+      </Carousel>
+    </div>
+  </div>
+</div>
+
+
+
+
 
         {/* CTA Button */}
         <div className="flex justify-center relative group">
-          <button
+          {/* <button
             onClick={() => {
               if (userRole !== "landlord") {
                 toast.info("Only landlords can post rental information.");
@@ -109,18 +172,18 @@ const HeroSection = () => {
             }`}
           >
             Post Rental House Info
-          </button>
+          </button> */}
 
           {/* Tooltip below the button */}
-          {userRole !== "landlord" && (
+          {/* {userRole !== "landlord" && (
             <span className="absolute -bottom-8 text-sm text-white bg-gray-700 px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition">
               Only landlords can post rentals
             </span>
-          )}
+          )} */}
         </div>
 
         {/* Search Bar */}
-        <div className="mt-6 flex flex-wrap justify-center gap-4">
+        {/* <div className="mt-6 flex flex-wrap justify-center gap-4">
           <input
             type="text"
             name="location"
@@ -154,13 +217,18 @@ const HeroSection = () => {
           >
             Search
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Rental House Cards */}
       <div className="container mx-auto mt-12">
+
+      <h2 className="text-3xl font-bold text-[#D97706] mb-6">Latest Listings</h2>
+            <p className="text-lg text-gray-300 mb-12">
+              See the latest Listings in here with facilities
+            </p>
         {/* Rental House Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {visibleListings.map((item, index) => (
             <div
               onClick={() => router.push(`/${item?._id}`)}
@@ -202,7 +270,7 @@ const HeroSection = () => {
         </div>
 
         {/* Show All Button */}
-        {(data?.data?.length ?? 0) > 6 && (
+        {(data?.data?.length ?? 0) > 8 && (
           <div className="flex justify-center mt-10">
             <button
               onClick={() => router.push("/listings")}
