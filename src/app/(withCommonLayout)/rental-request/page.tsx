@@ -48,7 +48,7 @@ const MyRentalRequests = () => {
 
   useEffect(() => {
     if (userId) {
-      fetch("https://basha-vara-backend.vercel.app/api/auth/users")
+      fetch("http://localhost:5000/api/auth/users")
         .then((res) => res.json())
         .then((data) => {
           const matchedUser = data?.data?.find(

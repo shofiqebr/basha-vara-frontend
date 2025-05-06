@@ -28,12 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className="bg-[#1F2937] min-h-screen"
+        className="bg-[#1F2937] min-h-screen "
         suppressHydrationWarning
       >
-        {/* <Navbar /> */}
         <div className="min-h-screen">{children}</div>
-        {/* <Footer /> */}
         <ToastContainer />
       </body>
     </html>

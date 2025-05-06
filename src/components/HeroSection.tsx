@@ -62,7 +62,7 @@ const HeroSection = () => {
 
   // Fetch listings using SWR
   const { data, error, isLoading } = useSWR(
-    "https://basha-vara-backend.vercel.app/api/landlords/listings",
+    "http://localhost:5000/api/landlords/listings",
     fetcher,
     { refreshInterval: 5000 } // Re-fetch every 5 seconds
   );

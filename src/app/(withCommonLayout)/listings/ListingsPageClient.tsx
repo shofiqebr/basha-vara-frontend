@@ -27,7 +27,7 @@ const ListingsPageClient = () => {
   const bedrooms = searchParams.get("bedrooms") || "";
 
   const { data, error, isLoading } = useSWR<{ data: Listing[] }>(
-    "https://basha-vara-backend.vercel.app/api/landlords/listings",
+    "http://localhost:5000/api/landlords/listings",
     fetcher
   );
 

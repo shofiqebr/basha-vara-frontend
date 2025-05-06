@@ -46,9 +46,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRes = await fetch(
-          "https://basha-vara-backend.vercel.app/api/admin/users"
-        );
+        const userRes = await fetch("http://localhost:5000/api/admin/users");
         const userData = await userRes.json();
         setUsers(userData.data);
       } catch {
@@ -57,7 +55,7 @@ const AdminDashboard = () => {
 
       try {
         const listingRes = await fetch(
-          "https://basha-vara-backend.vercel.app/api/admin/listings"
+          "http://localhost:5000/api/admin/listings"
         );
         const listingData = await listingRes.json();
         setListings(listingData.data);
@@ -77,12 +75,9 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (id: string) => {
     if (confirm("Are you sure you want to delete this user?")) {
       try {
-        await fetch(
-          `https://basha-vara-backend.vercel.app/api/admin/users/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+          method: "DELETE",
+        });
         toast.success("User deleted successfully");
         setUsers(users.filter((u) => u._id !== id));
       } catch {
@@ -114,7 +109,7 @@ const AdminDashboard = () => {
 
     try {
       const res = await fetch(
-        `https://basha-vara-backend.vercel.app/api/admin/listings/${editingListing._id}`,
+        `http://localhost:5000/api/admin/listings/${editingListing._id}`,
         {
           method: "PUT",
           headers: {
@@ -146,7 +141,7 @@ const AdminDashboard = () => {
   const handleDeleteListing = async (id: string) => {
     try {
       const res = await fetch(
-        `https://basha-vara-backend.vercel.app/api/admin/listings/${id}`,
+        `http://localhost:5000/api/admin/listings/${id}`,
         {
           method: "DELETE",
         }
@@ -222,7 +217,7 @@ const AdminDashboard = () => {
                       };
                       try {
                         const res = await fetch(
-                          `https://basha-vara-backend.vercel.app/api/admin/users/${editingUser._id}`,
+                          `http://localhost:5000/api/admin/users/${editingUser._id}`,
                           {
                             method: "PUT",
                             headers: {

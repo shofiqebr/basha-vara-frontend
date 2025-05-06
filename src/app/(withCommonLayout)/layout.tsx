@@ -11,7 +11,10 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return <div className="min-h-screen">
     <Navbar/>
+    <div className="max-w-[1600px] mx-auto min-h-[700px]">
+
     {children}
+    </div>
     <Footer/>
     <ToastContainer />
     </div>;
