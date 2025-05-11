@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Define the Listing interface
 interface Listing {
@@ -25,11 +26,18 @@ const ListingsPageClient = () => {
   const search = searchParams.get("search")?.toLowerCase() || "";
 
   const { data, error, isLoading } = useSWR<{ data: Listing[] }>(
-    "https://basha-vara-backend.vercel.app/api/landlords/listings",
+    "http://localhost:5000/api/landlords/listings",
     fetcher
   );
 
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+   const router = useRouter();
+    // Unified search logic
+  const handleSearch = () => {
+    router.push(`/listings?search=${searchTerm}`);
+  };
 
   useEffect(() => {
     if (!data?.data) return;
@@ -56,7 +64,27 @@ const ListingsPageClient = () => {
   const hasFilters = Boolean(search);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6 mt-10">
+    <>
+
+      {/* Search Bar */}
+          <div className=" flex justify-center pt-5 gap-2 w-full md:w-auto">
+            <input
+              type="text"
+              placeholder="Search by location, price, or bedrooms..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full md:w-[400px] p-2 rounded-md border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
+            />
+
+          {/* Search Button */}
+          <button
+            onClick={handleSearch}
+            className="bg-yellow-600 text-white py-2 px-6 rounded-md font-bold hover:bg-yellow-700 transition border border-gray-500"
+            >
+            Search
+          </button>
+            </div>
+    <div className="min-h-screen bg-gray-900 text-white p-6 mt-5">
       <h1 className="text-3xl font-bold mb-6 text-yellow-500">
         {hasFilters ? "Filtered Listings" : "All Listings"}
       </h1>
@@ -95,6 +123,7 @@ const ListingsPageClient = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

@@ -73,7 +73,7 @@ const HeroSection = () => {
 
   // Fetch listings using SWR
   const { data, error, isLoading } = useSWR(
-    "https://basha-vara-backend.vercel.app/api/landlords/listings",
+    "http://localhost:5000/api/landlords/listings",
     fetcher,
     { refreshInterval: 5000 } // Re-fetch every 5 seconds
   );
@@ -93,12 +93,12 @@ const HeroSection = () => {
   // console.log(data)
 
   return (
-    <section className="bg-background pt-10 px-6 text-center text-white min-h-screen">
+    <section className="bg-background pt-8 px-6 text-center text-white min-h-screen">
       <div className="container mx-auto">
         {/* Navbar-like Search + Post Section */}
-        <div className="bg-gray-900 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 rounded-md mb-10 ">
+        <div className="px-6 py- flex flex-col md:flex-row items-center justify-center rounded-md mb-10 ">
           {/* Search Bar */}
-          <div className="flex-1 w-full md:w-auto">
+          <div className=" flex gap-2 w-full md:w-auto">
             <input
               type="text"
               placeholder="Search by location, price, or bedrooms..."
@@ -106,15 +106,15 @@ const HeroSection = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full md:w-[400px] p-2 rounded-md border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
             />
-          </div>
 
           {/* Search Button */}
           <button
             onClick={handleSearch}
-            className="bg-yellow-500 text-white py-2 px-6 rounded-md hover:bg-yellow-600 transition border border-gray-500"
-          >
+            className="bg-yellow-600 text-white py-2 px-6 rounded-md font-bold hover:bg-yellow-700 transition border border-gray-500"
+            >
             Search
           </button>
+            </div>
 
           {/* Post Rental CTA Button */}
           <div className="relative group">
@@ -127,18 +127,18 @@ const HeroSection = () => {
                 router.push("/post-rental");
               }}
               disabled={userRole !== "landlord"}
-              className={`ml-0 md:ml-4 bg-yellow-500 text-white py-2 px-6 rounded-md border border-gray-500 transition ${
+              className={`ml-0 md:ml-2 bg-yellow-600 text-white py-2 px-6 rounded-md border border-gray-500 transition ${
                 userRole !== "landlord"
                   ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-yellow-600"
+                  : "hover:bg-yellow-700"
               }`}
             >
-              Post Rental Info
+              Add Rental Info
             </button>
 
             {userRole !== "landlord" && (
-              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-white bg-gray-700 px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-                Only landlords can post rentals
+              <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-white bg-gray-700 px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                Only landlords can add rentals
               </span>
             )}
           </div>
@@ -150,7 +150,7 @@ const HeroSection = () => {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 24 24' fill='%23D97706' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-opacity='0.05' d='M12 3L2 12h3v9h6v-6h2v6h6v-9h3L12 3z'/%3E%3C/svg%3E")`,
           }}
         >
-          <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+          <div className="relative z-10 mx-auto grid md:grid-cols-2 gap-10 items-center">
             {/* Hero Text */}
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-yellow-500 mb-6 leading-tight">
@@ -274,7 +274,7 @@ const HeroSection = () => {
 
       {/* Rental House Cards */}
       {/* Rental House Cards */}
-      <div className="container mx-auto mt-12 bg-gray-900 py-16 px-4">
+      <div className="container mx-auto mt-  pt-10 px-">
         <h2 className="text-3xl font-bold text-yellow-500 mb-6">
           Latest Listings
         </h2>
@@ -291,7 +291,7 @@ const HeroSection = () => {
               className="bg-gray-800 shadow-lg border border-gray-700 rounded-2xl overflow-hidden text-white transition transform hover:scale-105 hover:shadow-xl cursor-pointer"
             >
               {/* Image */}
-              <div className="relative w-full h-80">
+              <div className="relative w-full h-56">
                 <Image
                   src={item.images[0] || "/placeholder.jpg"} // fallback in case image is missing
                   alt="House"
