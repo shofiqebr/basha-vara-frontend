@@ -1,3 +1,8 @@
+# Rental House App
+
+A full-stack MERN application where tenants can request rentals, and landlords can approve or reject them. Features include role-based dashboards, secure authentication, and Cloudinary integration for image uploads.
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
