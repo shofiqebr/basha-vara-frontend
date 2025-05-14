@@ -73,7 +73,7 @@ const HeroSection = () => {
 
   // Fetch listings using SWR
   const { data, error, isLoading } = useSWR(
-    "http://localhost:5000/api/landlords/listings",
+    "https://basha-vara-backend.vercel.app/api/landlords/listings",
     fetcher,
     { refreshInterval: 5000 } // Re-fetch every 5 seconds
   );
@@ -107,14 +107,14 @@ const HeroSection = () => {
               className="w-full md:w-[400px] p-2 rounded-md border border-gray-600 bg-gray-800 text-white placeholder-gray-400"
             />
 
-          {/* Search Button */}
-          <button
-            onClick={handleSearch}
-            className="bg-yellow-600 text-white py-2 px-6 rounded-md font-bold hover:bg-yellow-700 transition border border-gray-500"
+            {/* Search Button */}
+            <button
+              onClick={handleSearch}
+              className="bg-yellow-600 text-white py-2 px-6 rounded-md font-bold hover:bg-yellow-700 transition border border-gray-500"
             >
-            Search
-          </button>
-            </div>
+              Search
+            </button>
+          </div>
 
           {/* Post Rental CTA Button */}
           <div className="relative group">

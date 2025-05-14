@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-gray-900 text-white py-16 px-6 mt-10">
+    <div className="min-h-screen bg-gray-900 text-white py-16 px-6 mx-6 mt-10">
       <div className="max-w-5xl mx-auto">
         {/* Title */}
         <h1 className="text-4xl md:text-5xl font-bold text-yellow-500 text-center mb-10">

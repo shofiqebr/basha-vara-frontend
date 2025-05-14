@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import classNames from "classnames";
 import Link from "next/link";
 
-type ViewType = "users" | "listings" | "profile";
+type ViewType = "overview" | "users" | "listings" | "profile";
 
 type User = {
   _id: string;
@@ -30,7 +31,7 @@ type FormDataType = {
 };
 
 const AdminDashboard = () => {
-  const [activeView, setActiveView] = useState<ViewType>("users");
+  const [activeView, setActiveView] = useState<ViewType>("overview");
   const [users, setUsers] = useState<User[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -46,7 +47,9 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRes = await fetch("http://localhost:5000/api/admin/users");
+        const userRes = await fetch(
+          "https://basha-vara-backend.vercel.app/api/admin/users"
+        );
         const userData = await userRes.json();
         setUsers(userData.data);
       } catch {
@@ -55,7 +58,7 @@ const AdminDashboard = () => {
 
       try {
         const listingRes = await fetch(
-          "http://localhost:5000/api/admin/listings"
+          "https://basha-vara-backend.vercel.app/api/admin/listings"
         );
         const listingData = await listingRes.json();
         setListings(listingData.data);
@@ -75,9 +78,12 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (id: string) => {
     if (confirm("Are you sure you want to delete this user?")) {
       try {
-        await fetch(`http://localhost:5000/api/admin/users/${id}`, {
-          method: "DELETE",
-        });
+        await fetch(
+          `https://basha-vara-backend.vercel.app/api/admin/users/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
         toast.success("User deleted successfully");
         setUsers(users.filter((u) => u._id !== id));
       } catch {
@@ -109,7 +115,7 @@ const AdminDashboard = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/listings/${editingListing._id}`,
+        `https://basha-vara-backend.vercel.app/api/admin/listings/${editingListing._id}`,
         {
           method: "PUT",
           headers: {
@@ -141,7 +147,7 @@ const AdminDashboard = () => {
   const handleDeleteListing = async (id: string) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/listings/${id}`,
+        `https://basha-vara-backend.vercel.app/api/admin/listings/${id}`,
         {
           method: "DELETE",
         }
@@ -158,272 +164,164 @@ const AdminDashboard = () => {
     }
   };
 
+  const renderOverview = () => {
+    const totalUsers = users.length;
+    const totalListings = listings.length;
+    const activeUsers = users.filter((user) => user.isActive).length;
+    const inactiveUsers = totalUsers - activeUsers;
+
+    return (
+      <section>
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          Admin Dashboard Overview
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-gray-700 p-6 rounded-lg shadow-lg text-white">
+            <h3 className="text-xl font-bold mb-4">Total Users</h3>
+            <p className="text-4xl">{totalUsers}</p>
+          </div>
+          <div className="bg-gray-700 p-6 rounded-lg shadow-lg text-white">
+            <h3 className="text-xl font-bold mb-4">Active Users</h3>
+            <p className="text-4xl">{activeUsers}</p>
+          </div>
+          <div className="bg-gray-700 p-6 rounded-lg shadow-lg text-white">
+            <h3 className="text-xl font-bold mb-4">Inactive Users</h3>
+            <p className="text-4xl">{inactiveUsers}</p>
+          </div>
+          <div className="bg-gray-700 p-6 rounded-lg shadow-lg text-white">
+            <h3 className="text-xl font-bold mb-4">Total Listings</h3>
+            <p className="text-4xl">{totalListings}</p>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const renderUsers = () => {
+    return (
+      <section>
+        <h2 className="text-2xl font-bold mb-4">User Management</h2>
+        <table className="min-w-full bg-gray-800 text-white rounded-md">
+          <thead>
+            <tr className="bg-gray-700">
+              <th className="px-6 py-3 text-start">Name</th>
+              <th className="px-6 py-3 text-start">Email</th>
+              <th className="px-6 py-3 text-start">Role</th>
+              <th className="px-6 py-3 text-start">Status</th>
+              <th className="px-6 py-3 text-start">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user._id} className="bg-gray-800 hover:bg-gray-700">
+                <td className="px-6 py-4">{user.name}</td>
+                <td className="px-6 py-4">{user.email}</td>
+                <td className="px-6 py-4">{user.role}</td>
+                <td className="px-6 py-4">
+                  {user.isActive ? "Active" : "Inactive"}
+                </td>
+                <td className="px-6 py-4 space-x-2">
+                  <button
+                    onClick={() => handleEditUser(user)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUser(user._id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    );
+  };
+
+  const renderListings = () => {
+    return (
+      <section>
+        <h2 className="text-2xl font-bold mb-4">Rental Listings</h2>
+        <table className="min-w-full bg-gray-800 text-white rounded-md">
+          <thead>
+            <tr className="bg-gray-700">
+              <th className="px-6 py-3 text-start">Location</th>
+              <th className="px-6 py-3 text-start">Description</th>
+              <th className="px-6 py-3 text-start">Rent</th>
+              <th className="px-6 py-3 text-start">Bedrooms</th>
+              <th className="px-6 py-3 text-start">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {listings.map((listing) => (
+              <tr key={listing._id} className="bg-gray-800 hover:bg-gray-700">
+                <td className="px-6 py-4">{listing.location}</td>
+                <td className="px-6 py-4">{listing.description}</td>
+                <td className="px-6 py-4">৳{listing.rentAmount}</td>
+                <td className="px-6 py-4">{listing.numberOfBedrooms}</td>
+                <td className="px-6 py-4 space-x-2">
+                  <button
+                    onClick={() => handleEditClick(listing)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => handleDeleteListing(listing._id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    );
+  };
+
+  const renderProfile = () => {
+    return (
+      <section>
+        <h2 className="text-2xl font-bold mb-4">Admin Profile</h2>
+        {editingUser ? (
+          <div className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+            <p>
+              <strong>Name:</strong> {editingUser.name}
+            </p>
+            <p>
+              <strong>Email:</strong> {editingUser.email}
+            </p>
+            <p>
+              <strong>Role:</strong> {editingUser.role}
+            </p>
+            <p>
+              <strong>Status:</strong>{" "}
+              {editingUser.isActive ? "Active" : "Inactive"}
+            </p>
+          </div>
+        ) : (
+          <p>Select a user to view their profile details</p>
+        )}
+      </section>
+    );
+  };
+
   const renderContent = () => {
     switch (activeView) {
+      case "overview":
+        return renderOverview();
       case "users":
-        return (
-          <section>
-            <h2 className="text-2xl font-bold mb-4">User Management</h2>
-            <ul className="space-y-4">
-              {users.map((user) => (
-                <li
-                  key={user._id}
-                  className="bg-gray-800 p-4 rounded shadow space-y-1"
-                >
-                  <p>
-                    <strong>Name:</strong> {user.name}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {user.email}
-                  </p>
-                  <p>
-                    <strong>Role:</strong> {user.role}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{" "}
-                    {user.isActive ? "Active" : "Inactive"}
-                  </p>
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      onClick={() => handleEditUser(user)}
-                      className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
-                    >
-                      ✏️ Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUser(user._id)}
-                      className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
-                    >
-                      🗑️ Delete
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            {/* Modal for editing user */}
-            {showModal && editingUser && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white text-black p-6 rounded-md w-96">
-                  <h3 className="text-xl font-bold mb-4">Edit User</h3>
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      const updatedUser = {
-                        name: editingUser.name,
-                        email: editingUser.email,
-                        role: editingUser.role,
-                        isActive: editingUser.isActive,
-                      };
-                      try {
-                        const res = await fetch(
-                          `http://localhost:5000/api/admin/users/${editingUser._id}`,
-                          {
-                            method: "PUT",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(updatedUser),
-                          }
-                        );
-                        if (res.ok) {
-                          toast.success("User updated");
-                          setUsers((prev) =>
-                            prev.map((u) =>
-                              u._id === editingUser._id
-                                ? { ...u, ...updatedUser }
-                                : u
-                            )
-                          );
-                          setShowModal(false);
-                        } else {
-                          toast.error("Update failed");
-                        }
-                      } catch {
-                        toast.error("Update error");
-                      }
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="w-full mb-2 p-2 border rounded"
-                      value={editingUser.name}
-                      onChange={(e) =>
-                        setEditingUser({ ...editingUser, name: e.target.value })
-                      }
-                    />
-                    <input
-                      type="email"
-                      className="w-full mb-2 p-2 border rounded"
-                      value={editingUser.email}
-                      onChange={(e) =>
-                        setEditingUser({
-                          ...editingUser,
-                          email: e.target.value,
-                        })
-                      }
-                    />
-                    <select
-                      className="w-full mb-2 p-2 border rounded"
-                      value={editingUser.role}
-                      onChange={(e) =>
-                        setEditingUser({
-                          ...editingUser,
-                          role: e.target.value as User["role"],
-                        })
-                      }
-                    >
-                      <option value="admin">Admin</option>
-                      <option value="landlord">Landlord</option>
-                      <option value="tenant">Tenant</option>
-                    </select>
-                    <label className="flex items-center gap-2 mb-2">
-                      <input
-                        type="checkbox"
-                        checked={editingUser.isActive}
-                        onChange={(e) =>
-                          setEditingUser({
-                            ...editingUser,
-                            isActive: e.target.checked,
-                          })
-                        }
-                      />
-                      Active
-                    </label>
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="submit"
-                        className="bg-green-600 text-white px-4 py-2 rounded"
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowModal(false)}
-                        className="bg-gray-400 text-black px-4 py-2 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-          </section>
-        );
-
+        return renderUsers();
       case "listings":
-        return (
-          <section>
-            <h2 className="text-2xl font-bold mb-4">Rental Listings</h2>
-            <ul className="space-y-4">
-              {listings.map((listing) => (
-                <li
-                  key={listing._id}
-                  className="bg-gray-800 p-4 rounded shadow space-y-2"
-                >
-                  <p>
-                    <strong>Location:</strong> {listing.location}
-                  </p>
-                  <p>
-                    <strong>Description:</strong> {listing.description}
-                  </p>
-                  <p>
-                    <strong>Bedrooms:</strong>{" "}
-                    {listing.numberOfBedrooms || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Rent:</strong> ৳{listing.rentAmount}
-                  </p>
-                  <div className="space-x-2">
-                    <button
-                      onClick={() => handleEditClick(listing)}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded"
-                    >
-                      ✏️ Update
-                    </button>
-                    <button
-                      onClick={() => handleDeleteListing(listing._id)}
-                      className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
-                    >
-                      🗑️ Delete
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            {editingListing && (
-              <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-                <form
-                  onSubmit={handleFormSubmit}
-                  className="bg-white text-black p-6 rounded-lg w-full max-w-md space-y-4"
-                >
-                  <h3 className="text-xl font-bold mb-2">Edit Listing</h3>
-                  <input
-                    name="location"
-                    value={formData.location}
-                    onChange={handleFormChange}
-                    placeholder="Location"
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleFormChange}
-                    placeholder="Description"
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                  <input
-                    name="numberOfBedrooms"
-                    type="number"
-                    value={formData.numberOfBedrooms}
-                    onChange={handleFormChange}
-                    placeholder="Number of Bedrooms"
-                    className="w-full p-2 border border-gray-300 rounded"
-                    required
-                  />
-
-                  <input
-                    name="rentAmount"
-                    type="number"
-                    value={formData.rentAmount}
-                    onChange={handleFormChange}
-                    placeholder="Rent Amount"
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                  <div className="flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setEditingListing(null)}
-                      className="bg-gray-400 px-4 py-2 rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                    >
-                      Save Changes
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-          </section>
-        );
-
+        return renderListings();
       case "profile":
-        return (
-          <section>
-            <h2 className="text-2xl font-bold mb-4">Admin Profile</h2>
-            <p>Admin information</p>
-          </section>
-        );
-
+        return renderProfile();
       default:
         return <p>Select a section from the sidebar</p>;
     }
@@ -437,6 +335,14 @@ const AdminDashboard = () => {
           <Link href="/" className="hover:bg-gray-700 p-2 rounded">
             🏠 Home
           </Link>
+          <button
+            className={classNames("text-left hover:bg-gray-700 p-2 rounded", {
+              "bg-gray-700": activeView === "overview",
+            })}
+            onClick={() => setActiveView("overview")}
+          >
+            📊 Overview
+          </button>
           <button
             className={classNames("text-left hover:bg-gray-700 p-2 rounded", {
               "bg-gray-700": activeView === "users",
